@@ -2,57 +2,80 @@
 using System.Diagnostics;
 using System.Configuration;
 using System.Threading;
+using InfluxDB.Collector;
+using System.Collections.Generic;
 
 namespace WebApiInsight.Agent
 {
     class Program
     {
         static readonly int ReadingInterval = int.Parse(ConfigurationManager.AppSettings["Interval"]);
-
+        static readonly string PoolName = ConfigurationManager.AppSettings["PoolName"];
+        
         static void Main()
         {
-            var poolName = ConfigurationManager.AppSettings["PoolName"];
+            InitMetrics();
             while (true)
             {
-                var iisPoolPid = ProcessHelper.GetIisProcessID(poolName);
-                if (!ProcessHelper.IsPoolAlive(iisPoolPid))
+                try
                 {
-                    Console.WriteLine("sleeping");
-                    Thread.Sleep(ReadingInterval);
-                    continue;
+                    SaveMetrics();
                 }
-                ShowMetrics(iisPoolPid);
+                catch (InvalidOperationException ex)
+                {
+                    Console.WriteLine("Presumably go to sleep. Detail: {0}", ex);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: {0}", ex);
+                }
             }
             // ReSharper disable once FunctionNeverReturns
         }
 
-        private static void ShowMetrics(int pid)
+        static void SaveMetrics()
         {
-            var instanseName = ProcessHelper.GetInstanceNameForProcessId(pid);
-            var cpuCounter = new PerformanceCounter("Process", "% Processor Time", instanseName);
+            var iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
+            while (!ProcessHelper.IsPoolAlive(iisPoolPid))
+            {
+                double zeroUsage = 0;
+                WriteMetrics("cpu", zeroUsage);
+                WriteMetrics("memory_usage", zeroUsage);
+                Thread.Sleep(ReadingInterval);
+                iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
+            }
+            var instanseName = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
+
             var memoryCounter = new PerformanceCounter("Process", "Working Set - Private", instanseName);
-            try
+            var cpuCounter = new PerformanceCounter("Process", "% Processor Time", instanseName);
+
+            while (true)
             {
-                while (true)
-                {
-                    var metrics = new Metrics
-                    {
-                        Memory = Convert.ToInt32(memoryCounter.NextValue()) / 1024,
-                        Cpu = cpuCounter.NextValue() / Environment.ProcessorCount
-                    };
-                    Console.WriteLine("memory: {0}, cpu: {1}", metrics.Memory, metrics.Cpu);
-                    Thread.Sleep(ReadingInterval);
-                }
+                var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
+                var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
+
+                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                WriteMetrics("cpu", cpu);
+                WriteMetrics("memory_usage", memSize);
+
+                Thread.Sleep(ReadingInterval);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: {0}", ex);
-            }
-            finally
-            {
-                memoryCounter.Close();
-                cpuCounter.Close();
-            }
+            // ReSharper disable once FunctionNeverReturns
+        }
+
+        static void WriteMetrics(string measurement, object value)
+        {
+            Metrics.Write(measurement, new Dictionary<string, object> { { "value", value } });
+        }
+
+        static void InitMetrics()
+        {
+            Metrics.Collector = new CollectorConfiguration()
+               .Tag.With("host", Environment.GetEnvironmentVariable("COMPUTERNAME"))
+               .Tag.With("os", Environment.GetEnvironmentVariable("OS"))
+               .Batch.AtInterval(TimeSpan.FromSeconds(2))
+               .WriteTo.InfluxDB("http://localhost:8086", "mydb")
+               .CreateCollector();
         }
     }
 }
