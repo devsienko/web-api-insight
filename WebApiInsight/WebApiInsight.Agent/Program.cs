@@ -9,7 +9,7 @@ namespace WebApiInsight.Agent
 {
     class Program
     {
-        static readonly int ReadingInterval = int.Parse(ConfigurationManager.AppSettings["Interval"]);
+        static readonly int ReadingInterval = Settings.ReadingInterval;
         static readonly string PoolName = ConfigurationManager.AppSettings["PoolName"];
         
         static void Main()
@@ -41,7 +41,7 @@ namespace WebApiInsight.Agent
                 double zeroUsage = 0;
                 WriteMetrics("cpu", zeroUsage);
                 WriteMetrics("memory_usage", zeroUsage);
-                Thread.Sleep(ReadingInterval);
+                Thread.Sleep(ReadingInterval * 2);
                 iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
             }
             var instanseName = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
@@ -71,10 +71,11 @@ namespace WebApiInsight.Agent
         static void InitMetrics()
         {
             Metrics.Collector = new CollectorConfiguration()
+               .Tag.With("pool-name", PoolName)
                .Tag.With("host", Environment.GetEnvironmentVariable("COMPUTERNAME"))
                .Tag.With("os", Environment.GetEnvironmentVariable("OS"))
                .Batch.AtInterval(TimeSpan.FromSeconds(2))
-               .WriteTo.InfluxDB("http://localhost:8086", "mydb")
+               .WriteTo.InfluxDB(Settings.DbAddress, Settings.DbName)
                .CreateCollector();
         }
     }
