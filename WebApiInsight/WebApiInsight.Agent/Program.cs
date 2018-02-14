@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Threading;
 using InfluxDB.Collector;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WebApiInsight.Agent
 {
@@ -11,9 +12,26 @@ namespace WebApiInsight.Agent
     {
         static readonly int ReadingInterval = Settings.ReadingInterval;
         static readonly string PoolName = ConfigurationManager.AppSettings["PoolName"];
+
+        //static readonly Dictionary<MetricInfo, MetricSource> MetricsList = new Dictionary<MetricInfo, MetricSource>();
         
         static void Main()
         {
+            //var iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
+            //var instanseName = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
+            ////instanseName = "_LM_W3SVC_1_ROOT_MySite";
+            //var requestCounter = new PerformanceCounter(".NET CLR Memory", "% Time in GC", instanseName);
+            ////var requestCounter = new PerformanceCounter("ASP.NET Applications", "Requests/Sec", instanseName);
+            //var instanceNames = new PerformanceCounterCategory("ASP.NET Applications")
+            //         .GetInstanceNames()
+            //         .OrderBy(x => x);
+            //while (true)
+            //{
+            //    var value = requestCounter.NextValue();
+            //    Console.WriteLine(value);
+
+            //    Thread.Sleep(ReadingInterval);
+            //}
             InitMetrics();
             while (true)
             {
