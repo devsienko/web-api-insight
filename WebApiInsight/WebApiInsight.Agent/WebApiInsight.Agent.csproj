@@ -54,7 +54,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IisLogMetrics\IssLogReader.cs" />
+    <Compile Include="IisLogMetrics\IisLogReader.cs" />
     <Compile Include="IisLogMetrics\PullMergeSort.cs" />
     <Compile Include="IisLogMetrics\W3CEnumerable.cs" />
     <Compile Include="IisLogMetrics\W3CEvent.cs" />
