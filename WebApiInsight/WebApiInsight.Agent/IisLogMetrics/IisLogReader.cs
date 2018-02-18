@@ -13,6 +13,7 @@ namespace WebApiInsight.Agent
         private volatile string _logFilePath = string.Format(@"C:\data\ten\test\u_ex{0}.log", "18021623");
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly FileSystemWatcher _watcher;
+        private readonly string _poolName;
 
         private object locker = new object();
 
@@ -30,14 +31,15 @@ namespace WebApiInsight.Agent
         //todo: refactor using of poolName
         //todo: exceptions handling + logging
         //todo: add unit test
-        public void Process(string poolName)
+        public void Process()
         {
+            Console.WriteLine("Started IIS log reading. Pool name: {0}.", _poolName);
             var currentLogFilePath = _logFilePath; //to ensure the last reading
             var currentCursor = 0;
             while (true)
             {
                 var logRecords = W3CEnumerable.FromFile(currentLogFilePath).ToArray();
-                if(!logRecords.Any())
+                if (!logRecords.Any())
                 {
                     Thread.Sleep(Settings.ReadingInterval);
                     continue;
@@ -54,6 +56,7 @@ namespace WebApiInsight.Agent
                 var newRecords = logRecords.Skip(currentCursor);
                 foreach (var record in newRecords)
                     Events.Add(record);
+                Console.WriteLine("Added {0} records. Pool name: {1}", logRecords.Length - currentCursor, _poolName);
                 currentCursor = logRecords.Length;
 
                 Thread.Sleep(Settings.ReadingInterval);
@@ -71,6 +74,8 @@ namespace WebApiInsight.Agent
                 var newRecords = logRecords.Skip(cursor);
                 foreach (var record in newRecords)
                     Events.Add(record);
+                Console.WriteLine("Switched to new file {0} -> {1}. Got {2} records. Pool name: {3}.",
+                    logPath, _logFilePath, cursor, _poolName);
                 logPath = _logFilePath;
                 cursor = 0;
             }
