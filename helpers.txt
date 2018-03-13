@@ -1,0 +1,1 @@
+influxd.exe -config influxdb.conf

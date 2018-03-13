@@ -4,15 +4,11 @@ using System.Configuration;
 using System.Threading;
 using InfluxDB.Collector;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace WebApiInsight.Agent
 {
     class Program
     {
-        static readonly int ReadingInterval = Settings.ReadingInterval;
-        static readonly string PoolName = ConfigurationManager.AppSettings["PoolName"];
-
         //static readonly Dictionary<MetricInfo, MetricSource> MetricsList = new Dictionary<MetricInfo, MetricSource>();
         
         static void Main()
@@ -32,7 +28,8 @@ namespace WebApiInsight.Agent
 
             //    Thread.Sleep(ReadingInterval);
             //}
-            InitMetrics();
+            InitStorage();
+            Console.WriteLine("Started metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
                 try
@@ -48,19 +45,18 @@ namespace WebApiInsight.Agent
                     Console.WriteLine("Error: {0}", ex);
                 }
             }
-            // ReSharper disable once FunctionNeverReturns
         }
 
         static void SaveMetrics()
         {
-            var iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
+            var iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
             while (!ProcessHelper.IsPoolAlive(iisPoolPid))
             {
                 double zeroUsage = 0;
                 WriteMetrics("cpu", zeroUsage);
                 WriteMetrics("memory_usage", zeroUsage);
-                Thread.Sleep(ReadingInterval * 2);
-                iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
+                Thread.Sleep(Settings.ReadingInterval * 2);
+                iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
             }
             var instanseName = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
 
@@ -71,14 +67,12 @@ namespace WebApiInsight.Agent
             {
                 var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
                 var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
-
-                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                
                 WriteMetrics("cpu", cpu);
                 WriteMetrics("memory_usage", memSize);
 
-                Thread.Sleep(ReadingInterval);
+                Thread.Sleep(Settings.ReadingInterval);
             }
-            // ReSharper disable once FunctionNeverReturns
         }
 
         static void WriteMetrics(string measurement, object value)
@@ -86,15 +80,16 @@ namespace WebApiInsight.Agent
             Metrics.Write(measurement, new Dictionary<string, object> { { "value", value } });
         }
 
-        static void InitMetrics()
+        static void InitStorage()
         {
             Metrics.Collector = new CollectorConfiguration()
-               .Tag.With("pool-name", PoolName)
+               .Tag.With("pool-name", Settings.PoolName)
                .Tag.With("host", Environment.GetEnvironmentVariable("COMPUTERNAME"))
                .Tag.With("os", Environment.GetEnvironmentVariable("OS"))
                .Batch.AtInterval(TimeSpan.FromSeconds(2))
                .WriteTo.InfluxDB(Settings.DbAddress, Settings.DbName)
                .CreateCollector();
+            Console.WriteLine("Storage was inited (db address: {0}, db name: {1})", Settings.DbAddress, Settings.DbName);
         }
     }
 }

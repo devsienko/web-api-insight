@@ -15,7 +15,7 @@ namespace WebApiInsight.Agent
         private readonly FileSystemWatcher _watcher;
         private readonly string _poolName;
 
-        private object locker = new object();
+        private object _locker = new object();
 
         public readonly List<W3CEvent> Events = new List<W3CEvent>();
 
@@ -24,7 +24,7 @@ namespace WebApiInsight.Agent
             // ReSharper disable once UseObjectOrCollectionInitializer
             _watcher = new FileSystemWatcher();
             _watcher.Path = @"C:\data\ten\test";
-            _watcher.Created += (sender, e) => { lock (locker) { _logFilePath = e.FullPath; } };
+            _watcher.Created += (sender, e) => { lock (_locker) { _logFilePath = e.FullPath; } };
             _watcher.EnableRaisingEvents = true;
         }
 
@@ -46,7 +46,7 @@ namespace WebApiInsight.Agent
                 }
                 if (currentCursor == logRecords.Length)
                 {
-                    lock (locker)
+                    lock (_locker)
                     {
                         EnsureLastReading(ref currentLogFilePath, ref currentCursor);
                     }
