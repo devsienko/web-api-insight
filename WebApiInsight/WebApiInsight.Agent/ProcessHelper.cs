@@ -1,17 +1,23 @@
 ﻿using Microsoft.Web.Administration;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace WebApiInsight.Agent
 {
-    class ProcessHelper
+    public class ProcessHelper : IDisposable
     {
         const int NOT_RUNNING_PID = -1;
+        private ServerManager serverManager = new ServerManager();
 
-        public static int GetIisProcessID(string appPoolName)
+        public void Dispose()
         {
-            var serverManager = new ServerManager();
+            serverManager.Dispose();
+        }
+
+        public int GetIisProcessID(string appPoolName)
+        {
             foreach (var workerProcess in serverManager.WorkerProcesses)
             {
                 if (workerProcess.AppPoolName.Equals(appPoolName))
@@ -20,7 +26,7 @@ namespace WebApiInsight.Agent
             return NOT_RUNNING_PID;
         }
 
-        public static string GetInstanceNameForProcessId(int processId)
+        public string GetInstanceNameForProcessId(int processId)
         {
             string result = null;
             var process = Process.GetProcessById(processId);
@@ -30,7 +36,6 @@ namespace WebApiInsight.Agent
             var instances = performanceCat.GetInstanceNames()
                 .Where(inst => inst.StartsWith(processName))
                 .ToArray();
-
             foreach (string instance in instances)
             {
                 using (var cnt = new PerformanceCounter("Process", "ID Process", instance, true))
@@ -46,7 +51,7 @@ namespace WebApiInsight.Agent
             return result;
         }
 
-        public static bool IsPoolAlive(int pid)
+        public bool IsPoolAlive(int pid)
         {
             var result = pid != NOT_RUNNING_PID;
             return result;

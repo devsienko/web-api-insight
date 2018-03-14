@@ -49,30 +49,47 @@ namespace WebApiInsight.Agent
 
         static void SaveMetrics()
         {
-            var iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
-            while (!ProcessHelper.IsPoolAlive(iisPoolPid))
+            PerformanceCounter memoryCounter = null, cpuCounter = null;
+            try
             {
-                double zeroUsage = 0;
-                WriteMetrics("cpu", zeroUsage);
-                WriteMetrics("memory_usage", zeroUsage);
-                Thread.Sleep(Settings.ReadingInterval * 2);
-                iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
+                var instanceName = GetW3pInstanceName();
+                memoryCounter = new PerformanceCounter("Process", "Working Set - Private", instanceName);
+                cpuCounter = new PerformanceCounter("Process", "% Processor Time", instanceName);
+                while (true)
+                {
+                    var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
+                    var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
+
+                    WriteMetrics("cpu", cpu);
+                    WriteMetrics("memory_usage", memSize);
+
+                    Thread.Sleep(Settings.ReadingInterval);
+                }
             }
-            var instanseName = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
+            finally{
+                if(memoryCounter != null)
+                    memoryCounter.Dispose();
+                if (cpuCounter != null)
+                    cpuCounter.Dispose();
+            }
+        }
 
-            var memoryCounter = new PerformanceCounter("Process", "Working Set - Private", instanseName);
-            var cpuCounter = new PerformanceCounter("Process", "% Processor Time", instanseName);
-
-            while (true)
+        static string GetW3pInstanceName()
+        {
+            var result = string.Empty;
+            using (var pHelper = new ProcessHelper())
             {
-                var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
-                var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
-                
-                WriteMetrics("cpu", cpu);
-                WriteMetrics("memory_usage", memSize);
-
-                Thread.Sleep(Settings.ReadingInterval);
+                var iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
+                while (!pHelper.IsPoolAlive(iisPoolPid))
+                {
+                    WriteMetrics("cpu", 0);
+                    WriteMetrics("memory_usage", 0);
+                    Thread.Sleep(Settings.ReadingInterval * 2);
+                    iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
+                }
+                result = pHelper.GetInstanceNameForProcessId(iisPoolPid);
             }
+            return result;
         }
 
         static void WriteMetrics(string measurement, object value)
