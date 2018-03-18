@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Configuration;
 using System.Threading;
 using InfluxDB.Collector;
 using System.Collections.Generic;
@@ -80,15 +79,21 @@ namespace WebApiInsight.Agent
             using (var pHelper = new ProcessHelper())
             {
                 var iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
+                if (!pHelper.IsPoolAlive(iisPoolPid))
+                    Console.WriteLine("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
+                //it's necessary to write zero value to influx by Metrics.Write
+                //I suppose it's issue of InfluxDB.Collector
+                double zeroUsage = 0;
                 while (!pHelper.IsPoolAlive(iisPoolPid))
                 {
-                    WriteMetrics("cpu", 0);
-                    WriteMetrics("memory_usage", 0);
+                    WriteMetrics("cpu", zeroUsage);
+                    WriteMetrics("memory_usage", zeroUsage);
                     Thread.Sleep(Settings.ReadingInterval * 2);
                     iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
                 }
                 result = pHelper.GetInstanceNameForProcessId(iisPoolPid);
             }
+            Console.WriteLine("Pool'{0}' is active.", Settings.PoolName);
             return result;
         }
 
