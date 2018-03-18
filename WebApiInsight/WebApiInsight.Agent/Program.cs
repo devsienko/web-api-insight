@@ -3,13 +3,17 @@ using System.Diagnostics;
 using System.Threading;
 using InfluxDB.Collector;
 using System.Collections.Generic;
+using WebApiInsight.Agent.Util;
+using log4net;
 
 namespace WebApiInsight.Agent
 {
     class Program
     {
+
+        static readonly ILog _logger = LogHelper.GetLogger();
         //static readonly Dictionary<MetricInfo, MetricSource> MetricsList = new Dictionary<MetricInfo, MetricSource>();
-        
+
         static void Main()
         {
             //var iisPoolPid = ProcessHelper.GetIisProcessID(PoolName);
@@ -23,12 +27,12 @@ namespace WebApiInsight.Agent
             //while (true)
             //{
             //    var value = requestCounter.NextValue();
-            //    Console.WriteLine(value);
+            //    _logger.InfoFormat(value);
 
             //    Thread.Sleep(ReadingInterval);
             //}
             InitStorage();
-            Console.WriteLine("Started metrics reading (for the pool {0})", Settings.PoolName);
+            _logger.InfoFormat("Started metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
                 try
@@ -37,11 +41,11 @@ namespace WebApiInsight.Agent
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Console.WriteLine("Presumably go to sleep. Detail: {0}", ex);
+                    _logger.Error("Presumably go to sleep. Detail: {0}", ex);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error: {0}", ex);
+                    _logger.Error("Error: {0}", ex);
                 }
             }
         }
@@ -80,7 +84,7 @@ namespace WebApiInsight.Agent
             {
                 var iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
                 if (!pHelper.IsPoolAlive(iisPoolPid))
-                    Console.WriteLine("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
+                    _logger.InfoFormat("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
                 //it's necessary to write zero value to influx by Metrics.Write
                 //I suppose it's issue of InfluxDB.Collector
                 double zeroUsage = 0;
@@ -93,7 +97,7 @@ namespace WebApiInsight.Agent
                 }
                 result = pHelper.GetInstanceNameForProcessId(iisPoolPid);
             }
-            Console.WriteLine("Pool'{0}' is active.", Settings.PoolName);
+            _logger.InfoFormat("Pool'{0}' is active.", Settings.PoolName);
             return result;
         }
 
@@ -111,7 +115,7 @@ namespace WebApiInsight.Agent
                .Batch.AtInterval(TimeSpan.FromSeconds(2))
                .WriteTo.InfluxDB(Settings.DbAddress, Settings.DbName)
                .CreateCollector();
-            Console.WriteLine("Storage was inited (db address: {0}, db name: {1})", Settings.DbAddress, Settings.DbName);
+            _logger.InfoFormat("Storage was inited (db address: {0}, db name: {1})", Settings.DbAddress, Settings.DbName);
         }
     }
 }
