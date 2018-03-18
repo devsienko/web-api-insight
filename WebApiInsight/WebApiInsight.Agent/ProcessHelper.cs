@@ -18,6 +18,7 @@ namespace WebApiInsight.Agent
 
         public int GetIisProcessID(string appPoolName)
         {
+            serverManager.CommitChanges(); //to update state of iis
             foreach (var workerProcess in serverManager.WorkerProcesses)
             {
                 if (workerProcess.AppPoolName.Equals(appPoolName))
