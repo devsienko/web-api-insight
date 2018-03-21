@@ -6,28 +6,24 @@ using System.Linq;
 
 namespace WebApiInsight.Agent
 {
-    public class ProcessHelper : IDisposable
+    public class ProcessHelper
     {
         const int NOT_RUNNING_PID = -1;
-        private ServerManager serverManager = new ServerManager();
-
-        public void Dispose()
+        
+        public static int GetIisProcessID(string appPoolName)
         {
-            serverManager.Dispose();
-        }
-
-        public int GetIisProcessID(string appPoolName)
-        {
-            serverManager.CommitChanges(); //to update state of iis
-            foreach (var workerProcess in serverManager.WorkerProcesses)
+            using (var serverManager = ServerManager.OpenRemote("localhost"))
             {
-                if (workerProcess.AppPoolName.Equals(appPoolName))
-                    return workerProcess.ProcessId;
+                foreach (var workerProcess in serverManager.WorkerProcesses)
+                {
+                    if (workerProcess.AppPoolName.Equals(appPoolName))
+                        return workerProcess.ProcessId;
+                }
             }
             return NOT_RUNNING_PID;
         }
 
-        public string GetInstanceNameForProcessId(int processId)
+        public static string GetInstanceNameForProcessId(int processId)
         {
             string result = null;
             var process = Process.GetProcessById(processId);
@@ -52,7 +48,7 @@ namespace WebApiInsight.Agent
             return result;
         }
 
-        public bool IsPoolAlive(int pid)
+        public static bool IsPoolAlive(int pid)
         {
             var result = pid != NOT_RUNNING_PID;
             return result;

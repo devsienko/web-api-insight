@@ -80,23 +80,20 @@ namespace WebApiInsight.Agent
         static string GetW3pInstanceName()
         {
             var result = string.Empty;
-            using (var pHelper = new ProcessHelper())
+            var iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
+            if (!ProcessHelper.IsPoolAlive(iisPoolPid))
+                _logger.InfoFormat("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
+            //it's necessary to write zero value to influx by Metrics.Write
+            //I suppose it's issue of InfluxDB.Collector
+            double zeroUsage = 0;
+            while (!ProcessHelper.IsPoolAlive(iisPoolPid))
             {
-                var iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
-                if (!pHelper.IsPoolAlive(iisPoolPid))
-                    _logger.InfoFormat("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
-                //it's necessary to write zero value to influx by Metrics.Write
-                //I suppose it's issue of InfluxDB.Collector
-                double zeroUsage = 0;
-                while (!pHelper.IsPoolAlive(iisPoolPid))
-                {
-                    WriteMetrics("cpu", zeroUsage);
-                    WriteMetrics("memory_usage", zeroUsage);
-                    Thread.Sleep(Settings.ReadingInterval * 2);
-                    iisPoolPid = pHelper.GetIisProcessID(Settings.PoolName);
-                }
-                result = pHelper.GetInstanceNameForProcessId(iisPoolPid);
+                WriteMetrics("cpu", zeroUsage);
+                WriteMetrics("memory_usage", zeroUsage);
+                Thread.Sleep(Settings.ReadingInterval * 2);
+                iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
             }
+            result = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
             _logger.InfoFormat("Pool'{0}' is active.", Settings.PoolName);
             return result;
         }
