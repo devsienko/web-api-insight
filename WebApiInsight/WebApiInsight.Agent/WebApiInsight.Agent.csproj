@@ -64,6 +64,9 @@
     <Compile Include="InstanseNameProviders\InstanceNameProvidersFactory.cs" />
     <Compile Include="InstanseNameProviders\W3wpInstanceNameProvider.cs" />
     <Compile Include="InstanseNameProviders\IisNodeInstanceNameProvider.cs" />
+    <Compile Include="CpuAndMemoryCollector.cs" />
+    <Compile Include="InfluxDbManager.cs" />
+    <Compile Include="IDbManager.cs" />
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
     <Compile Include="Util\LogHelper.cs" />
     <Compile Include="ProcessHelper.cs" />
