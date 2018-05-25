@@ -22,13 +22,16 @@ namespace WebApiInsight.Agent
             var iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
             var instanceName = ProcessHelper.GetInstanseName(Settings.AppName, Settings.PoolName);
             var requestCounter = new PerformanceCounter("ASP.NET Applications", "Requests/Sec", instanceName);
+            var requestFailedCounter = new PerformanceCounter("ASP.NET Applications", "Requests Failed", instanceName);
             var instanceNames = new PerformanceCounterCategory("ASP.NET Applications")
                      .GetInstanceNames()
                      .OrderBy(x => x);
             while (true)
             {
                 var value = requestCounter.NextValue();
-                Console.WriteLine(value);
+                var valueReqFailed = requestFailedCounter.NextValue();
+                _dbManager.WriteMetrics("req-per-sec", value);
+                _dbManager.WriteMetrics("req-failed", valueReqFailed);
 
                 Thread.Sleep(Settings.ReadingInterval);
             }

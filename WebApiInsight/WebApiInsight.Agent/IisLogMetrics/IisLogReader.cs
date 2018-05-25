@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,21 +10,27 @@ namespace WebApiInsight.Agent
 {
     public class IisLogReader
     {
-        private volatile int _cursor;
+        readonly ILog _logger;
+        readonly IDbManager _dbManager;
+
         private volatile string _logFilePath = string.Format(@"C:\data\ten\test\u_ex{0}.log", "18021623");
-        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private readonly FileSystemWatcher _watcher;
-        private readonly string _poolName;
+        private FileSystemWatcher _watcher = new FileSystemWatcher();
 
         private object _locker = new object();
 
         public readonly List<W3CEvent> Events = new List<W3CEvent>();
 
-        public IisLogReader()
+        public IisLogReader(ILog logger, IDbManager dbManager, string logsPath)
         {
-            // ReSharper disable once UseObjectOrCollectionInitializer
+            _logger = logger;
+            _dbManager = dbManager;
+            InitLogFileWatcher(logsPath);
+        }
+
+        private void InitLogFileWatcher(string logsPath)
+        {
             _watcher = new FileSystemWatcher();
-            _watcher.Path = @"C:\data\ten\test";
+            _watcher.Path = logsPath;
             _watcher.Created += (sender, e) => { lock (_locker) { _logFilePath = e.FullPath; } };
             _watcher.EnableRaisingEvents = true;
         }
@@ -31,9 +38,12 @@ namespace WebApiInsight.Agent
         //todo: refactor using of poolName
         //todo: exceptions handling + logging
         //todo: add unit test
+        /// <summary>
+        /// It reads the lastest log file till the end and is triggered again after appearance the new log file.
+        /// </summary>
         public void Process()
         {
-            Console.WriteLine("Started IIS log reading. Pool name: {0}.", _poolName);
+            _logger.InfoFormat("Started IIS log reading. App name: {0}.", Settings.AppName);
             var currentLogFilePath = _logFilePath; //to ensure the last reading
             var currentCursor = 0;
             while (true)
@@ -56,12 +66,10 @@ namespace WebApiInsight.Agent
                 var newRecords = logRecords.Skip(currentCursor);
                 foreach (var record in newRecords)
                     Events.Add(record);
-                Console.WriteLine("Added {0} records. Pool name: {1}", logRecords.Length - currentCursor, _poolName);
+                _logger.InfoFormat("Added {0} records. App name: {1}", logRecords.Length - currentCursor, Settings.AppName);
                 currentCursor = logRecords.Length;
-
                 Thread.Sleep(Settings.ReadingInterval);
             }
-            // ReSharper disable once FunctionNeverReturns
         }
 
         private void EnsureLastReading(ref string logPath, ref int cursor)
@@ -74,8 +82,8 @@ namespace WebApiInsight.Agent
                 var newRecords = logRecords.Skip(cursor);
                 foreach (var record in newRecords)
                     Events.Add(record);
-                Console.WriteLine("Switched to new file {0} -> {1}. Got {2} records. Pool name: {3}.",
-                    logPath, _logFilePath, cursor, _poolName);
+                _logger.InfoFormat("Switched to new file {0} -> {1}. Got {2} records. App name: {3}.",
+                    logPath, _logFilePath, cursor, Settings.AppName);
                 logPath = _logFilePath;
                 cursor = 0;
             }

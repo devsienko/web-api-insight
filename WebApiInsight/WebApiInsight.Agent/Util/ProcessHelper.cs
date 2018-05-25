@@ -1,4 +1,5 @@
 ﻿using Microsoft.Web.Administration;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,39 +29,59 @@ namespace WebApiInsight.Agent
 
         public static string GetInstanseName(string appName, string poolName)
         {
+            var appInfo = GetAppInfo(appName, poolName);
+            if (appInfo.CurrentApp != null && appInfo.CurrentSite != null)
+            {
+                var result = string.Format("_LM_W3SVC_{0}_ROOT_{1}",
+                                appInfo.CurrentSite.Id,
+                                GetAppNameByPath(appInfo.CurrentApp.Path));
+                return result;
+            }
+            else if (appInfo.CurrentSite != null)
+            {
+                var result = string.Format("_LM_W3SVC_{0}_ROOT", appInfo.CurrentSite.Id);
+                return result;
+            }
+            else
+                throw new InvalidOperationException("Application instance name not found.");
+        }
+
+        public static string GetLogsPath(string appName, string poolName)
+        {
+            var appInfo = GetAppInfo(appName, poolName);
+            var result = string.Format(@"{0}\W3SVC{1}", appInfo.CurrentSite.LogFile.Directory, appInfo.CurrentSite.Id);
+            result = Environment.ExpandEnvironmentVariables(result);
+            return result;
+        }
+
+        private static AppInfo GetAppInfo(string appName, string poolName)
+        {
+            var result = new AppInfo();
             using (var serverManager = ServerManager.OpenRemote("localhost"))
             {
-                Site resultSite = null;
-                Application resultApp = null;
                 foreach (var site in serverManager.Sites)
                 {
+                    if (site.Name.ToUpper() == appName.ToUpper()
+                        && site.ApplicationDefaults.ApplicationPoolName.ToUpper() == poolName.ToUpper())
+                    {
+                        result.CurrentSite = site;
+                        return result;
+                    }
                     foreach (var app in site.Applications)
                     {
                         if (app.Path.Equals("/" + appName) && app.ApplicationPoolName == poolName)
                         {
-                            resultSite = site;
-                            resultApp = app;
-                            break;
+                            result.CurrentSite = site;
+                            result.CurrentApp = app;
+                            return result;
                         }
                     }
                 }
-                var result = string.Format("_LM_W3SVC_{0}_ROOT_Atrinova.Utilli.WebApi",
-                    resultSite.Id,
-                    GetAppNameByPath(resultApp.Path));
-                return result;
             }
-            
-            //example of input: LM/Sites/Default Web Site/IisNodeName
-            //example of result: _LM_W3SVC_1_ROOT_IisNodeName
-            //var result = Settings.NodePath.Replace('/', '_');
-            //result = "_LM_W3SVC_1_ROOT_Atrinova.Utilli.WebApi";
-
-            //var test = serverManager.Sites.First();
-            //var t2 = test.Applications.First(a => a.Path == "/" + "Atrinova.Utilli.WebApi");
-
+            return result;
         }
 
-        public static string GetAppNameByPath(string path)
+            public static string GetAppNameByPath(string path)
         {
             //we are using Last for the case of nested application, for example /Default Web Sites/app/nested-app
             var result = path.Split('/').Last(); 

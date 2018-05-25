@@ -69,8 +69,9 @@
     <Compile Include="InfluxDbManager.cs" />
     <Compile Include="IDbManager.cs" />
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
+    <Compile Include="Util\AppInfo.cs" />
     <Compile Include="Util\LogHelper.cs" />
-    <Compile Include="ProcessHelper.cs" />
+    <Compile Include="Util\ProcessHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InstanseNameProviders\IInstanceNameProvider.cs" />
