@@ -57,6 +57,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collectors\RequestPerSecCollector.cs" />
+    <Compile Include="Collectors\CpuAndMemoryCollector.cs" />
     <Compile Include="IisLogMetrics\IisLogReader.cs" />
     <Compile Include="IisLogMetrics\PullMergeSort.cs" />
     <Compile Include="IisLogMetrics\W3CEnumerable.cs" />
@@ -64,7 +66,6 @@
     <Compile Include="InstanseNameProviders\InstanceNameProvidersFactory.cs" />
     <Compile Include="InstanseNameProviders\W3wpInstanceNameProvider.cs" />
     <Compile Include="InstanseNameProviders\IisNodeInstanceNameProvider.cs" />
-    <Compile Include="CpuAndMemoryCollector.cs" />
     <Compile Include="InfluxDbManager.cs" />
     <Compile Include="IDbManager.cs" />
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
@@ -77,7 +78,9 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
