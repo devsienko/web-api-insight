@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-// ReSharper disable once CheckNamespace
 namespace WebApiInsight.Agent
 {
     public static class W3CEnumerable
@@ -22,52 +21,47 @@ namespace WebApiInsight.Agent
             return new PullMergeSort<W3CEvent>(e => e.dateTime, inputs);
         }
 
-        public static IEnumerable<W3CEvent> FromFile(string file)
-        {
-            using (var reader = File.OpenText(file))
-            {
-                IEnumerable<W3CEvent> enumerable = FromStream(reader);
-                for (;;)
-                {
-                    foreach (var e in enumerable)
-                        yield return e;
-
-                    break;
-                }
-            }
-        }
-
-        public static IEnumerable<W3CEvent> FromStream(StreamReader reader)
+        public static IEnumerable<W3CEvent> FromFile(string filePath)
         {
             Expression<Func<string[], W3CEvent>> transformExpression;
             Func<string[], W3CEvent> transform = null;
 
-            for (;;)
+            var result = new List<W3CEvent>();
+
+
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var sr = new StreamReader(fs))
             {
-                string line = reader.ReadLine();
-                if (line == null)
-                    yield break;
-
-                if (line.StartsWith("#Fields:"))
+                while (!sr.EndOfStream)
                 {
-                    transformExpression = GetTransformExpression(line);
-                    transform = transformExpression.Compile();
-                    continue;
+                    var line = sr.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    if (line.StartsWith("#Fields:"))
+                    {
+                        transformExpression = GetTransformExpression(line);
+                        transform = transformExpression.Compile();
+                        continue;
+                    }
+
+                    if (line.StartsWith("#"))
+                        continue;
+
+                    string[] tokens = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int i = 0; i < tokens.Length; i++)
+                        if (tokens[i] == "-")
+                            tokens[i] = null;
+
+                    W3CEvent e = transform(tokens);
+
+                    result.Add(e);
                 }
-
-                if (line.StartsWith("#"))
-                    continue;
-
-                string[] tokens = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-
-                for (int i = 0; i < tokens.Length; i++)
-                    if (tokens[i] == "-")
-                        tokens[i] = null;
-
-                W3CEvent e = transform(tokens);
-
-                yield return e;
             }
+
+
+            return result;
         }
 
         static Expression<Func<string[], W3CEvent>> GetTransformExpression(string fieldsHeader)
@@ -125,6 +119,12 @@ namespace WebApiInsight.Agent
             Expression<Func<string[], W3CEvent>> exp = Expression.Lambda<Func<string[], W3CEvent>>(m, ex.Parameters);
 
             return exp;
+        }
+
+        static DateTime ParseDateTime(string date, string time)
+        {
+            DateTime dt = DateTime.Parse(date + " " + time);
+            return dt;
         }
 
         static string MakeIdentifier(string s)

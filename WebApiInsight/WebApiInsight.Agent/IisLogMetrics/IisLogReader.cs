@@ -13,7 +13,7 @@ namespace WebApiInsight.Agent
         readonly ILog _logger;
         readonly IDbManager _dbManager;
 
-        private volatile string _logFilePath = string.Format(@"C:\data\ten\test\u_ex{0}.log", "18021623");
+        private volatile string _logFilePath = string.Empty;
         private FileSystemWatcher _watcher = new FileSystemWatcher();
 
         private object _locker = new object();
@@ -24,6 +24,10 @@ namespace WebApiInsight.Agent
         {
             _logger = logger;
             _dbManager = dbManager;
+            _logFilePath = new DirectoryInfo(logsPath)
+                .GetFiles()
+                .OrderByDescending(f => f.LastWriteTime)
+                .First().FullName;
             InitLogFileWatcher(logsPath);
         }
 
