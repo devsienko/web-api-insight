@@ -30,8 +30,8 @@ namespace WebApiInsight.Agent
             {
                 var value = requestCounter.NextValue();
                 var valueReqFailed = requestFailedCounter.NextValue();
-                _dbManager.WriteMetrics("req-per-sec", value);
-                _dbManager.WriteMetrics("req-failed", valueReqFailed);
+                _dbManager.WriteMetricsValue("req-per-sec", value);
+                _dbManager.WriteMetricsValue("req-failed", valueReqFailed);
 
                 Thread.Sleep(Settings.ReadingInterval);
             }

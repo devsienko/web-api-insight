@@ -21,8 +21,8 @@ namespace WebApiInsight.Agent
             };
             collectorThreads.ForEach(t => t.Start());
 
-            //var iisReader = new IisLogReader(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
-            //iisReader.Process();
+            var iisReader = new IisLogReader(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
+            iisReader.Process();
         }
     }
 }

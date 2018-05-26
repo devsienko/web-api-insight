@@ -49,8 +49,8 @@ namespace WebApiInsight.Agent
                     var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
                     var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
 
-                    _dbManager.WriteMetrics("cpu", cpu);
-                    _dbManager.WriteMetrics("memory_usage", memSize);
+                    _dbManager.WriteMetricsValue("cpu", cpu);
+                    _dbManager.WriteMetricsValue("memory_usage", memSize);
 
                     Thread.Sleep(Settings.ReadingInterval);
                 }
@@ -75,8 +75,8 @@ namespace WebApiInsight.Agent
             double zeroUsage = 0;
             while (!ProcessHelper.IsPoolAlive(iisPoolPid))
             {
-                _dbManager.WriteMetrics("cpu", zeroUsage);
-                _dbManager.WriteMetrics("memory_usage", zeroUsage);
+                _dbManager.WriteMetricsValue("cpu", zeroUsage);
+                _dbManager.WriteMetricsValue("memory_usage", zeroUsage);
                 Thread.Sleep(Settings.ReadingInterval * 2);
                 iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
             }

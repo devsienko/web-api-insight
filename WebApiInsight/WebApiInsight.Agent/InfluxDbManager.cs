@@ -1,7 +1,7 @@
-﻿using InfluxDB.Collector;
-using log4net;
+﻿using log4net;
 using System;
-using System.Collections.Generic;
+using Vibrant.InfluxDB.Client;
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace WebApiInsight.Agent
 {
@@ -13,26 +13,35 @@ namespace WebApiInsight.Agent
         public InfluxDbManager(ILog logger)
         {
             _logger = logger;
-            InitStorage();
-        }
-
-        private void InitStorage()
-        {
-            Metrics.Collector = new CollectorConfiguration()
-               .Tag.With("pool-name", Settings.PoolName)
-               .Tag.With("host", Environment.GetEnvironmentVariable("COMPUTERNAME"))
-               .Tag.With("os", Environment.GetEnvironmentVariable("OS"))
-               .Batch.AtInterval(TimeSpan.FromSeconds(2))
-               .WriteTo.InfluxDB(Settings.DbAddress, Settings.DbName)
-               .CreateCollector();
             _logger.InfoFormat("Storage was inited (db address: {0}, db name: {1})", Settings.DbAddress, Settings.DbName);
         }
         
-        public void WriteMetrics(string measurement, object value)
+        public void WriteMetricsValue(string measurement, object value)
         {
-            lock (_syncObject)
+            var dbRecord = new DynamicInfluxRow();
+            dbRecord.Fields.Add("value", value);
+            dbRecord.Tags.Add("pool-name", Settings.PoolName);
+            dbRecord.Tags.Add("host", Environment.GetEnvironmentVariable("COMPUTERNAME"));
+            dbRecord.Tags.Add("os", Environment.GetEnvironmentVariable("OS"));
+            dbRecord.Timestamp = DateTime.UtcNow;
+            using (var client = new InfluxClient(new Uri(Settings.DbAddress)))
             {
-                Metrics.Write(measurement, new Dictionary<string, object> { { "value", value } });
+                var infos = new DynamicInfluxRow[] { dbRecord };
+                client.WriteAsync(Settings.DbName, measurement, infos)
+                    .GetAwaiter()
+                    .GetResult();
+            }
+        }
+
+        public void WriteMetrics/*<TInfluxRow>*/(string measurement, DynamicInfluxRow props)//, IEnumerable<TInfluxRow> rows) 
+            //where TInfluxRow : new()
+        {
+            using (var client = new InfluxClient(new Uri(Settings.DbAddress)))
+            {
+                var infos = new DynamicInfluxRow[] { props };
+                client.WriteAsync(Settings.DbName, measurement, infos)
+                    .GetAwaiter()
+                    .GetResult();
             }
         }
     }

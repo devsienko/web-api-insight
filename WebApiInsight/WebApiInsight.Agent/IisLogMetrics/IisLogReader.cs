@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Vibrant.InfluxDB.Client.Rows;
 
 // ReSharper disable once CheckNamespace
 namespace WebApiInsight.Agent
@@ -17,8 +18,6 @@ namespace WebApiInsight.Agent
         private FileSystemWatcher _watcher = new FileSystemWatcher();
 
         private object _locker = new object();
-
-        public readonly List<W3CEvent> Events = new List<W3CEvent>();
 
         public IisLogReader(ILog logger, IDbManager dbManager, string logsPath)
         {
@@ -69,11 +68,21 @@ namespace WebApiInsight.Agent
                 }
                 var newRecords = logRecords.Skip(currentCursor);
                 foreach (var record in newRecords)
-                    Events.Add(record);
+                    WriteMetrics(record);
                 _logger.InfoFormat("Added {0} records. App name: {1}", logRecords.Length - currentCursor, Settings.AppName);
                 currentCursor = logRecords.Length;
                 Thread.Sleep(Settings.ReadingInterval);
             }
+        }
+
+        private void WriteMetrics(W3CEvent record)
+        {
+            var dbRecord = new DynamicInfluxRow();
+            dbRecord.Fields.Add("time_taken", double.Parse(record.time_taken));
+            dbRecord.Tags.Add("cs_uri_stem", record.cs_uri_stem);
+            dbRecord.Tags.Add("cs_method", record.cs_method);
+            dbRecord.Timestamp = DateTime.UtcNow;
+            _dbManager.WriteMetrics("page-stat", dbRecord);
         }
 
         private void EnsureLastReading(ref string logPath, ref int cursor)
@@ -85,7 +94,7 @@ namespace WebApiInsight.Agent
                 var logRecords = W3CEnumerable.FromFile(logPath).ToArray();
                 var newRecords = logRecords.Skip(cursor);
                 foreach (var record in newRecords)
-                    Events.Add(record);
+                    WriteMetrics(record);
                 _logger.InfoFormat("Switched to new file {0} -> {1}. Got {2} records. App name: {3}.",
                     logPath, _logFilePath, cursor, Settings.AppName);
                 logPath = _logFilePath;
