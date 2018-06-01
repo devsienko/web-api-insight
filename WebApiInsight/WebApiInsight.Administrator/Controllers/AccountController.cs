@@ -44,7 +44,7 @@ namespace WebApiInsight.Administrator.Controllers
         {
             get
             {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _userManager ?? new ApplicationUserManager(new UserStoreJson());
             }
             private set
             {

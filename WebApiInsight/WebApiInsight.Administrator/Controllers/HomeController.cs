@@ -1,15 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using WebApiInsight.Administrator.Models;
 
 namespace WebApiInsight.Administrator.Controllers
 {
+    //[Authorize]
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
+            var configPath = Server.MapPath(Url.Content("~/users.json"));
+            var users = new ApplicationUser[] {
+                new ApplicationUser
+                {
+                    UserName = "daniil"
+                }
+            };
+            var json = new JavaScriptSerializer().Serialize(users);
+            System.IO.File.WriteAllText(configPath, json);
             return View();
         }
 

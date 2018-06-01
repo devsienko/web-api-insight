@@ -42,7 +42,7 @@ namespace WebApiInsight.Administrator
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
         {
-            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
+            var manager = new ApplicationUserManager(new UserStoreJson());
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
@@ -86,6 +86,87 @@ namespace WebApiInsight.Administrator
             }
             return manager;
         }
+    }
+
+    public class UserStoreJson : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>
+    {
+        public Task CreateAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ApplicationUser> FindByIdAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ApplicationUser> FindByNameAsync(string userName)
+        {
+            ApplicationUser result = null;
+            return Task.FromResult(result);
+        }
+
+        public Task UpdateAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~Test() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+
+        public Task SetPasswordHashAsync(ApplicationUser user, string passwordHash)
+        {
+            user.PasswordHash = passwordHash;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetPasswordHashAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> HasPasswordAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
     }
 
     // Configure the application sign-in manager which is used in this application.
