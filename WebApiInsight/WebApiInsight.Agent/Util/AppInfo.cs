@@ -6,6 +6,5 @@ namespace WebApiInsight.Agent
     {
         public Site CurrentSite { get; set; }
         public Application CurrentApp { get; set; }
-
     }
 }

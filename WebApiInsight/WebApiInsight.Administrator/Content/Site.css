@@ -1,0 +1,91 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+.navbar-inverse {
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+    color: #777;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+    color: #777;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #777;
+}
+
+span.metric-default {
+    color: #777;
+    border-color: #777;
+}
+span.metric {
+    display: inline-block;
+    min-width: 10px;
+    padding: 2px 6px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 1px;
+    -webkit-transition: color .1s ease-out, background .1s ease-out, border .1s ease-out;
+    -moz-transition: color .1s ease-out, background .1s ease-out, border .1s ease-out;
+    -ms-transition: color .1s ease-out, background .1s ease-out, border .1s ease-out;
+    -o-transition: color .1s ease-out, background .1s ease-out, border .1s ease-out;
+    transition: color .1s ease-out, background .1s ease-out, border .1s ease-out;
+}
+
+.page-header {
+    padding-bottom: 9px;
+    margin: 40px 0 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.dashboard-frame {
+    width: calc(100% + 61px);
+    height: 700px;
+    margin-left: -61px;
+    border:none;
+}
+
+.iframe-fix {
+    position: absolute;
+    height: 700px;
+    width: 61px;
+    left: 321px;
+    /* z-index: 99999; */
+    background: white;
+}
