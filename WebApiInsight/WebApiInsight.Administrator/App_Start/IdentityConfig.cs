@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Threading.Tasks;
-using System.Web;
+using System.Web.Script.Serialization;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using WebApiInsight.Administrator.Models;
+using System.Web;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace WebApiInsight.Administrator
 {
@@ -90,9 +93,25 @@ namespace WebApiInsight.Administrator
 
     public class UserStoreJson : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>
     {
+        private readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "users.json");
+
         public Task CreateAsync(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            var users = GetUsers();
+            users.Add(user);
+            var json = new JavaScriptSerializer().Serialize(users);
+            File.WriteAllText(ConfigPath, json);
+            return Task.FromResult(0);
+
+        }
+
+        private static string GetAssemblyLocation()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var codebase = new Uri(assembly.CodeBase);
+            var path = Path.GetDirectoryName(codebase.LocalPath);
+            var result = Directory.GetParent(path).FullName;
+            return result;
         }
 
         public Task DeleteAsync(ApplicationUser user)
@@ -102,16 +121,43 @@ namespace WebApiInsight.Administrator
 
         public Task<ApplicationUser> FindByIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            var users = GetUsers();
+            var result = users.FirstOrDefault(u => u.Id == userId);
+            return Task.FromResult(result);
         }
 
         public Task<ApplicationUser> FindByNameAsync(string userName)
         {
-            ApplicationUser result = null;
+            var users = GetUsers();
+            var result = users.FirstOrDefault(u => u.UserName == userName);
             return Task.FromResult(result);
         }
 
+        private List<ApplicationUser> GetUsers()
+        {
+            var jsonConfig = File.ReadAllText(ConfigPath);
+            var deserializer = new JavaScriptSerializer();
+            var result = deserializer.Deserialize<ApplicationUser[]>(jsonConfig);
+            return result.ToList();
+        }
+
         public Task UpdateAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetPasswordHashAsync(ApplicationUser user, string passwordHash)
+        {
+            user.PasswordHash = passwordHash;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetPasswordHashAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> HasPasswordAsync(ApplicationUser user)
         {
             throw new NotImplementedException();
         }
@@ -148,22 +194,6 @@ namespace WebApiInsight.Administrator
             Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
-        }
-
-        public Task SetPasswordHashAsync(ApplicationUser user, string passwordHash)
-        {
-            user.PasswordHash = passwordHash;
-            return Task.FromResult(0);
-        }
-
-        public Task<string> GetPasswordHashAsync(ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> HasPasswordAsync(ApplicationUser user)
-        {
-            throw new NotImplementedException();
         }
         #endregion
 
