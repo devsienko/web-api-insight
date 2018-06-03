@@ -20,20 +20,27 @@
                 @Html.ActionLink("Web Api Monitor", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/">Dashboard</a>
-                    </li>
-                    <li>
-                        <a href="/">Агенты <span data-metric="servers:count" class="metric metric-default">2</span></a>
-                    </li>
-                    <li>
-                        <a href="/">Настройки</a>
-                    </li>
-                    <li>
-                        <a href="/">Пользователи</a>
-                    </li>
-                </ul>
+                @if (Request.IsAuthenticated)
+                {
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="/">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="/">Агенты <span data-metric="servers:count" class="metric metric-default">2</span></a>
+                        </li>
+                        <li>
+                            <a href="/">Настройки</a>
+                        </li>
+                        <li>
+                            <a href="/">Пользователи</a>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+
+                }
                 @Html.Partial("_LoginPartial")
             </div>
         </div>

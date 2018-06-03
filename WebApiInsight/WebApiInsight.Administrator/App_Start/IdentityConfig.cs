@@ -12,8 +12,6 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using WebApiInsight.Administrator.Models;
-using System.Web;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace WebApiInsight.Administrator
 {
@@ -45,7 +43,7 @@ namespace WebApiInsight.Administrator
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
         {
-            var manager = new ApplicationUserManager(new UserStoreJson());
+            var manager = new ApplicationUserManager(new UserManager());
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
@@ -67,20 +65,6 @@ namespace WebApiInsight.Administrator
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
-
-            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
-            // You can write your own provider and plug it in here.
-            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
-            {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
-            });
-            manager.EmailService = new EmailService();
-            manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
@@ -91,7 +75,8 @@ namespace WebApiInsight.Administrator
         }
     }
 
-    public class UserStoreJson : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>
+    public class UserManager : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>, 
+        IUserLockoutStore<ApplicationUser, string>
     {
         private readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "users.json");
 
@@ -154,10 +139,60 @@ namespace WebApiInsight.Administrator
 
         public Task<string> GetPasswordHashAsync(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            return Task.FromResult(user.PasswordHash);
         }
 
         public Task<bool> HasPasswordAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public Task<DateTimeOffset> GetLockoutEndDateAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetLockoutEndDateAsync(ApplicationUser user, DateTimeOffset lockoutEnd)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> IncrementAccessFailedCountAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ResetAccessFailedCountAsync(ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetAccessFailedCountAsync(ApplicationUser user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            return Task.FromResult(user.AccessFailedCount);
+        }
+
+        public Task<bool> GetLockoutEnabledAsync(ApplicationUser user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            return Task.FromResult(user.LockoutEnabled);
+        }
+
+        public Task SetLockoutEnabledAsync(ApplicationUser user, bool enabled)
         {
             throw new NotImplementedException();
         }
@@ -210,7 +245,7 @@ namespace WebApiInsight.Administrator
         public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
         {
             return user.GenerateUserIdentityAsync((ApplicationUserManager)UserManager);
-        }
+    }
 
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {

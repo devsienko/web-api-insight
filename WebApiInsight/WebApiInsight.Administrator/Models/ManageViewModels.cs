@@ -10,7 +10,6 @@ namespace WebApiInsight.Administrator.Models
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
         public string PhoneNumber { get; set; }
-        public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
     }
 
@@ -76,11 +75,5 @@ namespace WebApiInsight.Administrator.Models
         [Phone]
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
-    }
-
-    public class ConfigureTwoFactorViewModel
-    {
-        public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
 }

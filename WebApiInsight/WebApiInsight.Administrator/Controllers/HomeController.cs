@@ -1,10 +1,8 @@
 ﻿using System.Web.Mvc;
-using System.Web.Script.Serialization;
-using WebApiInsight.Administrator.Models;
 
 namespace WebApiInsight.Administrator.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class HomeController : Controller
     {
         public ActionResult Index()
