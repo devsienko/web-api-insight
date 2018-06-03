@@ -9,7 +9,6 @@ namespace WebApiInsight.Administrator.Controllers
     {
         public ActionResult Index()
         {
-            Test2("http://localhost:4545/", "11");
             return View();
         }
 
@@ -20,7 +19,7 @@ namespace WebApiInsight.Administrator.Controllers
 
         public ActionResult Settings(int id)
         {
-            id = 11;//todo: use the real number
+            ViewBag.AgentConfiguration = GetAgentConfiguration("http://localhost:4545/", id.ToString());
             ViewBag.AgentId = id;
             return View();
         }
@@ -46,7 +45,7 @@ namespace WebApiInsight.Administrator.Controllers
             //}
         }
 
-        public void Test2(string agentBaseAddress, string agentId)
+        public string GetAgentConfiguration(string agentBaseAddress, string agentId)
         {
             var SecurityToken = string.Empty;
             using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
@@ -61,7 +60,7 @@ namespace WebApiInsight.Administrator.Controllers
                 EnsureSuccess(result, agentId);
 
                 var conf = result.Content.ReadAsAsync<Configuration>().Result;
-
+                return conf.JsonConfig;
             }
         }
         
