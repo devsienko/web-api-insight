@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using WebApiInsight.Administrator.Models;
-using System.Net;
 using System.Web.Security;
 
 namespace WebApiInsight.Administrator.Controllers
@@ -17,9 +12,7 @@ namespace WebApiInsight.Administrator.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
         private UserManager _userManager;
-        private IAuthenticationManager _authenticationManager;
         
         public UserManager UserManager
         {
@@ -33,13 +26,6 @@ namespace WebApiInsight.Administrator.Controllers
             }
         }
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
         //
         // GET: /Account/Login
         [AllowAnonymous]
@@ -268,12 +254,6 @@ namespace WebApiInsight.Administrator.Controllers
                 {
                     _userManager.Dispose();
                     _userManager = null;
-                }
-
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
                 }
             }
 
