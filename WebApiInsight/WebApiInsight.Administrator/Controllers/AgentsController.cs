@@ -7,7 +7,13 @@ namespace WebApiInsight.Administrator.Controllers
     {
         public ActionResult Index()
         {
-            
+            return View();
+        }
+
+        public ActionResult Settings(int id)
+        {
+            id = 11;//todo: use the real number
+            ViewBag.AgentId = id;
             return View();
         }
     }

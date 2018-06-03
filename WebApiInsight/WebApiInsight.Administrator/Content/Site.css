@@ -89,3 +89,8 @@ span.metric {
     /* z-index: 99999; */
     background: white;
 }
+
+.job-snippet-properties pre {
+    background-color: #d9edf7; 
+    border-color: #bce8f1;
+}
