@@ -249,6 +249,7 @@
     </Content>
     <Content Include="Views\Agents\Index.cshtml" />
     <Content Include="Views\Agents\Settings.cshtml" />
+    <Content Include="Views\Agents\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

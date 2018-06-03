@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Добавление нового агента ";
+}
+
+<h2 class="page-header">@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
+<div class="row">
+
+    <div class="col-md-9">
+
+        @*<div class="alert alert-info">
+            <strong>Изменения успешно сохранены.</strong>.
+        </div>*@
+        <div class="job-snippet">
+            <div class="job-snippet-properties">
+                <dl>
+                    <dt>IP-адрес</dt>
+                    <dd><pre><code>127.0.0.1</code></pre></dd>
+                    <dt>Порт</dt>
+                    <dd><pre><code>4444</code></pre></dd>
+                </dl>
+            </div>
+        </div>
+        <h3>
+            <span class="job-snippet-buttons pull-right">
+                <button class="btn btn-sm btn-default">
+                    Добавить
+                </button>
+            </span>
+        </h3>
+    </div>
+</div>

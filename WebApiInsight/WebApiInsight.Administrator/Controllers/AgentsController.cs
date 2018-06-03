@@ -10,6 +10,11 @@ namespace WebApiInsight.Administrator.Controllers
             return View();
         }
 
+        public ActionResult Add()
+        {
+            return View();
+        }
+
         public ActionResult Settings(int id)
         {
             id = 11;//todo: use the real number
