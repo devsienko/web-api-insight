@@ -55,7 +55,7 @@ namespace WebApiInsight.Administrator
             return Task.FromResult(result);
         }
 
-        private List<ApplicationUser> GetUsers()
+        public List<ApplicationUser> GetUsers()
         {
             var jsonConfig = File.ReadAllText(ConfigPath);
             var deserializer = new JavaScriptSerializer();

@@ -13,10 +13,9 @@ namespace WebApiInsight.Administrator.Models
         public bool BrowserRemembered { get; set; }
     }
 
-    public class ManageLoginsViewModel
+    public class UsersViewModel
     {
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
-        public IList<AuthenticationDescription> OtherLogins { get; set; }
+        public IList<ApplicationUser> Users { get; set; }
     }
 
     public class FactorViewModel
