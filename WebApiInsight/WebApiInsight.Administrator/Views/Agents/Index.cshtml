@@ -9,3 +9,79 @@
 
 <h2 class="page-header">@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
+
+<div class="js-jobs-list">
+    <div class="btn-toolbar btn-toolbar-top">
+        <button class="js-jobs-list-command btn btn-sm btn-primary" data-url="/wgl/hangfire/jobs/processing/requeue" data-loading-text="Enqueueing..." disabled="">
+            <span class="glyphicon glyphicon-repeat"></span>
+            Обновить
+        </button>
+        <button class="js-jobs-list-command btn btn-sm btn-default" data-url="/wgl/hangfire/jobs/processing/delete" data-loading-text="Deleting..." data-confirm="Do you really want to DELETE ALL selected jobs?" disabled="">
+            <span class="glyphicon glyphicon-remove"></span>
+            Удалить выбранные
+        </button>
+        <div class="btn-toolbar-spacer pull-right"></div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="min-width">
+                        <input type="checkbox" class="js-jobs-list-select-all">
+                    </th>
+                    <th class="min-width">Ид</th>
+                    <th class="min-width">Сервер</th>
+                    <th>Статус</th>
+                    <th class="align-right" style="text-align: right;">Добавлен</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="js-jobs-list-row  hover">
+                    <td>
+                        <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291237">
+                    </td>
+                    <td class="min-width">
+                        <a href="/wgl/hangfire/jobs/details/1291237">#1</a>
+                    </td>
+                    <td class="min-width">
+                        <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">wtf5757:11352</span>
+                    </td>
+                    <td class="word-break">
+
+                        <a class="job-method" href="/wgl/hangfire/jobs/details/1291237">Запущен</a>
+                    </td>
+                    <td class="align-right" style="text-align: right;">
+                        <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">
+                            2 дня назад
+                        </span>
+                    </td>
+                </tr>
+                <tr class="js-jobs-list-row  hover">
+                    <td>
+                        <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291236">
+                    </td>
+                    <td class="min-width">
+                        <a href="/wgl/hangfire/jobs/details/1291236">#2</a>
+                    </td>
+                    <td class="min-width">
+                        <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">wtf5757:11352</span>
+                    </td>
+                    <td class="word-break">
+
+                        <a class="job-method" href="/wgl/hangfire/jobs/details/1291236">Проистановлен</a>
+                    </td>
+                    <td class="align-right" style="text-align: right;">
+                        <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">
+                            2 дня назад
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="btn-toolbar">
+        <div class="btn-toolbar-label">
+            Всего элементов: 2
+        </div>
+    </div>
+</div>
