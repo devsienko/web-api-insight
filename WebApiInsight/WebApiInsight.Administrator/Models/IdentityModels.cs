@@ -19,6 +19,7 @@ namespace WebApiInsight.Administrator.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
 

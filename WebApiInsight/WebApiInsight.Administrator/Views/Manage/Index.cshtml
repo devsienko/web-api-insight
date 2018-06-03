@@ -5,7 +5,6 @@
 
 <h2>@ViewBag.Title</h2>
 
-<p class="text-success">@ViewBag.StatusMessage</p>
 <div>
     <h4>Изменение настроек учетной записи</h4>
     <hr />
@@ -13,14 +12,7 @@
         <dt>Пароль:</dt>
         <dd>
             [
-            @if (Model.HasPassword)
-            {
-                @Html.ActionLink("Изменить пароль", "ChangePassword")
-            }
-            else
-            {
-                @Html.ActionLink("Create", "SetPassword")
-            }
+            @Html.ActionLink("Изменить пароль", "ChangePassword")
             ]
         </dd>
         <dt>Email:</dt>

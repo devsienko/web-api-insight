@@ -54,22 +54,7 @@ namespace WebApiInsight.Administrator.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
-
-            var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
-            {
-                HasPassword = HasPassword(),
-                //PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
-                //Logins = await UserManager.GetLoginsAsync(userId),
-                //BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
-            };
+            var model = new IndexViewModel { };
             return View(model);
         }
 
@@ -236,7 +221,7 @@ namespace WebApiInsight.Administrator.Controllers
 
         private bool HasPassword()
         {
-            //var user = UserManager.FindById(User.Identity.GetUserId());
+            //var user = UserManager.FindByNameAsync(User.Identity.Name);
             //if (user != null)
             //{
             //    return user.PasswordHash != null;

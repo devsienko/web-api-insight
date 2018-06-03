@@ -24,22 +24,26 @@
                 {
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="/">Dashboard</a>
+                            <a href="/">Дэшборд</a>
                         </li>
                         <li>
-                            <a href="/">Агенты <span data-metric="servers:count" class="metric metric-default">2</span></a>
-                        </li>
-                        <li>
-                            <a href="/">Настройки</a>
+                            <a href="/Agents">Агенты <span data-metric="servers:count" class="metric metric-default">2</span></a>
                         </li>
                         <li>
                             <a href="/">Пользователи</a>
+                        </li>
+                        <li>
+                            <a href="/Home/Contact">Контакты</a>
                         </li>
                     </ul>
                 }
                 else
                 {
-
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="/Home/Contact">Контакты</a>
+                        </li>
+                    </ul>
                 }
                 @Html.Partial("_LoginPartial")
             </div>
