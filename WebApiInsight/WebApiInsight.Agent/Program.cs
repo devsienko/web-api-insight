@@ -1,7 +1,10 @@
-﻿using WebApiInsight.Agent.Util;
+﻿using System;
+using WebApiInsight.Agent.Util;
 using log4net;
 using System.Threading;
 using System.Collections.Generic;
+using System.Web.Http;
+using System.Web.Http.SelfHost;
 
 namespace WebApiInsight.Agent
 {
@@ -21,8 +24,26 @@ namespace WebApiInsight.Agent
             };
             collectorThreads.ForEach(t => t.Start());
 
+            StartRestServer();
+
             var iisReader = new IisLogReader(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
             iisReader.Process();
+        }
+
+        static void StartRestServer()
+        {
+            var config = new HttpSelfHostConfiguration("http://localhost:" + Settings.ServerPort);
+
+            config.Routes.MapHttpRoute(
+                "API Default", "api/{controller}/{id}",
+                new { id = RouteParameter.Optional });
+
+            using (HttpSelfHostServer server = new HttpSelfHostServer(config))
+            {
+                server.OpenAsync().Wait();
+                Console.WriteLine("Press Enter to quit.");
+                Console.ReadLine();
+            }
         }
     }
 }
