@@ -15,18 +15,18 @@ namespace WebApiInsight.Agent
         static void Main()
         {
             var influxDbManager = new InfluxDbManager(_logger);
-            var cpuMemCollector = new CpuAndMemoryCollector(_logger, influxDbManager);
-            var reqPerSecCollector = new RequestPerSecCollector(_logger, influxDbManager);
+            var processCollector = new ProcessCollector(_logger, influxDbManager);
+            var aspNetCollector = new AspNetCollector(_logger, influxDbManager);
             var collectorThreads = new List<Thread>
             {
-                new Thread(reqPerSecCollector.Start),
-                new Thread(cpuMemCollector.Start),
+                new Thread(processCollector.Start),
+                new Thread(aspNetCollector.Start),
             };
             collectorThreads.ForEach(t => t.Start());
 
             StartRestServer();
 
-            var iisReader = new IisLogReader(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
+            var iisReader = new IisLogCollector(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
             iisReader.Process();
         }
 

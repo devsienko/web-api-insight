@@ -8,7 +8,7 @@ using Vibrant.InfluxDB.Client.Rows;
 // ReSharper disable once CheckNamespace
 namespace WebApiInsight.Agent
 {
-    public class IisLogReader
+    public class IisLogCollector
     {
         readonly ILog _logger;
         readonly IDbManager _dbManager;
@@ -18,7 +18,7 @@ namespace WebApiInsight.Agent
 
         private object _locker = new object();
 
-        public IisLogReader(ILog logger, IDbManager dbManager, string logsPath)
+        public IisLogCollector(ILog logger, IDbManager dbManager, string logsPath)
         {
             _logger = logger;
             _dbManager = dbManager;

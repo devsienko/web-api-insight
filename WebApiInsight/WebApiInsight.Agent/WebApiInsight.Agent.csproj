@@ -73,9 +73,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collectors\RequestPerSecCollector.cs" />
-    <Compile Include="Collectors\CpuAndMemoryCollector.cs" />
-    <Compile Include="IisLogMetrics\IisLogReader.cs" />
+    <Compile Include="Collectors\MeasurementData.cs" />
+    <Compile Include="Collectors\MetricConfirItem.cs" />
+    <Compile Include="Collectors\AspNetCollector.cs" />
+    <Compile Include="Collectors\BaseCollector.cs" />
+    <Compile Include="Collectors\ProcessCollector.cs" />
+    <Compile Include="IisLogMetrics\IisLogCollector.cs" />
     <Compile Include="IisLogMetrics\PullMergeSort.cs" />
     <Compile Include="IisLogMetrics\W3CEnumerable.cs" />
     <Compile Include="IisLogMetrics\W3CEvent.cs" />
