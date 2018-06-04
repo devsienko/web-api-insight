@@ -92,6 +92,7 @@
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
     <Compile Include="Util\AppInfo.cs" />
     <Compile Include="Util\LogHelper.cs" />
+    <Compile Include="Util\MetricsConfigManager.cs" />
     <Compile Include="Util\ProcessHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

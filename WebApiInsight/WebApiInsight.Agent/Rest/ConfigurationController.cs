@@ -7,13 +7,13 @@ namespace WebApiInsight.Agent.Rest
         public Configuration GetConfiguration()
         {
             var result = new Configuration();
-            result.JsonConfig = Settings.GetMetricsConfig();
+            result.JsonConfig = MetricsConfigManager.GetMetricsConfig();
             return result;
         }
 
         public bool Post(Configuration newConfig)
         {
-            Settings.UpdateMetricsConfig(newConfig);
+            //MetricsConfigManager.UpdateMetricsConfig(newConfig);
             //todo: force agent read new metrics
             return true;
         }

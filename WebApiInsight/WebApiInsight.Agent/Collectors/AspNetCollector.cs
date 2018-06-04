@@ -16,16 +16,14 @@ namespace WebApiInsight.Agent
         
         protected override void InitMetricRecords()
         {
-            MetricsConfig = new List<MetricConfigItem>
-            {
-                CreateMetricRecord("req-per-sec", "ASP.NET Applications", "Requests/Sec"),
-                CreateMetricRecord("req-failed", "ASP.NET Applications", "Requests Failed")
-            };
+            MetricsConfig = MetricsConfigManager.ReadMetricsConfig()
+                .AspNetMetricsConfig
+                .ToList();
         }
 
         public override void Start()
         {
-            Logger.InfoFormat("Started metrics reading (for the pool {0})", Settings.PoolName);
+            Logger.InfoFormat("Started asp.net metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
                 try

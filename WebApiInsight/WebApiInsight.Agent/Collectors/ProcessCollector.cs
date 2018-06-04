@@ -18,16 +18,14 @@ namespace WebApiInsight.Agent
         {
             //todo: for the memory - var memSize = (double)Convert.ToInt32(memoryCounter.NextValue()) / 1024;
             //todo: for the cpu - var cpu = cpuCounter.NextValue() / Environment.ProcessorCount;
-            MetricsConfig = new List<MetricConfigItem>
-            {
-                CreateMetricRecord("memory_usage", "Process", "Working Set - Private"),
-                CreateMetricRecord("cpu", "Process", "% Processor Time")
-            };
+            MetricsConfig = MetricsConfigManager.ReadMetricsConfig()
+                .ProccessMetricsConfig
+                .ToList();
         }
 
         public override void Start()
         {
-            Logger.InfoFormat("Started metrics reading (for the pool {0})", Settings.PoolName);
+            Logger.InfoFormat("Started process metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
                 try
@@ -98,6 +96,11 @@ namespace WebApiInsight.Agent
             result = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
             Logger.InfoFormat("Pool'{0}' is active.", Settings.PoolName);
             return result;
+        }
+
+        private void LoadConfig()
+        {
+
         }
     }
 }

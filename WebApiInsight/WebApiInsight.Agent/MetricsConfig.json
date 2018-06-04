@@ -1,1 +1,26 @@
-[{"Test1":"e824f67c-ee39-4f5d-9dd3-f82a8f4e485c","Test2":"daniil_evsienko@mail.ru","Test3":"daniil_evsienko@mail.ru","Test4":null,"PasswordHash":"QtUgBDikSnL9CmKgSmILs1v8spk=","PasswordSalt":"nHfKIkC7Gb7FsAhA3GaTEw==","LockoutEnabled":false,"AccessFailedCount":0}]
+{
+  "AspNetMetricsConfig": [
+    {
+      "Measurement": "req-per-sec",
+      "CategoryName": "ASP.NET Applications",
+      "CounterName": "Requests/Sec"
+    },
+    {
+      "Measurement": "req-failed",
+      "CategoryName": "ASP.NET Applications",
+      "CounterName": "Requests Failed"
+    }
+  ],
+  "ProccessMetricsConfig": [
+    {
+      "Measurement": "memory_usage",
+      "CategoryName": "Process",
+      "CounterName": "Working Set - Private"
+    },
+    {
+      "Measurement": "cpu",
+      "CategoryName": "Process",
+      "CounterName": "% Processor Time"
+    }
+  ]
+}
