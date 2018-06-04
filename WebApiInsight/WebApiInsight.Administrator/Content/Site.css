@@ -94,3 +94,9 @@ span.metric {
     background-color: #d9edf7; 
     border-color: #bce8f1;
 }
+
+.add-agent .form-control {
+    background-color: #d9edf7; 
+    border-color: #bce8f1;
+    max-width: none;
+}

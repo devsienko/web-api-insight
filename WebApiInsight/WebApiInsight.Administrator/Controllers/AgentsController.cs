@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Net.Http;
 using System.Web.Mvc;
+using WebApiInsight.Administrator.Models;
 
 namespace WebApiInsight.Administrator.Controllers
 {
     [Authorize]
     public class AgentsController : Controller
     {
+        const string AgentPingResponse = "it's web monitor agent";
+
         public ActionResult Index()
         {
             return View();
@@ -14,6 +17,17 @@ namespace WebApiInsight.Administrator.Controllers
 
         public ActionResult Add()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Add(AddAgentViewModel model)
+        {
+            ModelState.AddModelError("", "test");
+            var agentResponse = PingAgent(string.Format("http://{0}:{1}", model.IpAddress, model.Port));
+            if (agentResponse.Equals(AgentPingResponse))
+                return RedirectToAction("Index", "Agents");
+            ModelState.AddModelError("", "Не удалось установить соединение с агентом.");
             return View();
         }
 
@@ -45,22 +59,37 @@ namespace WebApiInsight.Administrator.Controllers
             //}
         }
 
-        public string GetAgentConfiguration(string agentBaseAddress, string agentId)
+        public string PingAgent(string agentBaseAddress)
         {
-            var SecurityToken = string.Empty;
+            var SecurityToken = string.Empty;//todo: user token for the api requests
             using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
             {
-
                 if (!string.IsNullOrEmpty(SecurityToken))
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
+                var relativeUrl = "api/Ping";
+                var response = client.GetAsync(relativeUrl).Result;
+                if (!response.IsSuccessStatusCode)
+                {
+                    return string.Empty;
+                }
+                var result = response.Content.ReadAsAsync<string>().Result;
+                return result;
+            }
+        }
 
-                var relativeUrl = "api/Configuration";
-                var result = client.GetAsync(relativeUrl).Result;
 
-                EnsureSuccess(result, agentId);
-
-                var conf = result.Content.ReadAsAsync<Configuration>().Result;
-                return conf.JsonConfig;
+        public MetricsConfigContainer GetAgentConfiguration(string agentBaseAddress, string agentId)
+        {
+            var SecurityToken = string.Empty;//todo: user token for the api requests
+            using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
+            {
+                if (!string.IsNullOrEmpty(SecurityToken))
+                    client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
+                var relativeUrl = "api/Ping";
+                var response = client.GetAsync(relativeUrl).Result;
+                EnsureSuccess(response, agentId);
+                var result = response.Content.ReadAsAsync<MetricsConfigContainer>().Result;
+                return result;
             }
         }
         
@@ -73,8 +102,16 @@ namespace WebApiInsight.Administrator.Controllers
         }
     }
 
-    public class Configuration //todo: to shared assembly
+    public class MetricsConfigContainer//todo: to shared assembly
     {
-        public string JsonConfig { get; set; }
+        public MetricConfigItem[] AspNetMetricsConfig { get; set; }
+        public MetricConfigItem[] ProccessMetricsConfig { get; set; }
+    }
+
+    public class MetricConfigItem
+    {
+        public string Measurement { get; set; }
+        public string CategoryName { get; set; }
+        public string CounterName { get; set; }
     }
 }

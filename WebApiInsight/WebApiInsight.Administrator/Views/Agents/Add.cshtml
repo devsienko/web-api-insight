@@ -1,30 +1,36 @@
-﻿@{
+﻿@model WebApiInsight.Administrator.Models.AddAgentViewModel
+
+@{
     ViewBag.Title = "Добавление нового агента ";
 }
 
 <h2 class="page-header">@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
-<div class="row">
-    <div class="col-md-9">
-        @*<div class="alert alert-info">
-            <strong>Изменения успешно сохранены.</strong>.
-        </div>*@
-        <div class="job-snippet">
-            <div class="job-snippet-properties">
-                <dl>
-                    <dt>IP-адрес</dt>
-                    <dd><pre><code>127.0.0.1</code></pre></dd>
-                    <dt>Порт</dt>
-                    <dd><pre><code>4444</code></pre></dd>
-                </dl>
+
+<div class="add-agent">
+    @using (Html.BeginForm("Add", "Agents", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.IpAddress, new { @class = "col-md-2 control-label" })
+            <div class="col-md-7">
+                @Html.TextBoxFor(m => m.IpAddress, new { @class = "form-control", @placeholder = "IP адрес" })
             </div>
         </div>
-        <h3>
-            <span class="job-snippet-buttons pull-right">
-                <button class="btn btn-sm btn-default">
-                    Добавить
-                </button>
-            </span>
-        </h3>
-    </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Port, new { @class = "col-md-2 control-label" })
+            <div class="col-md-7">
+                @Html.TextBoxFor(m => m.Port, new { @class = "form-control", @placeholder = "порт" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-7 text-right">
+                <input type="submit" value="Добавить" class="btn btn-default" />
+            </div>
+        </div>
+    }
 </div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

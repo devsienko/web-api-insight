@@ -97,10 +97,5 @@ namespace WebApiInsight.Agent
             Logger.InfoFormat("Pool'{0}' is active.", Settings.PoolName);
             return result;
         }
-
-        private void LoadConfig()
-        {
-
-        }
     }
 }
