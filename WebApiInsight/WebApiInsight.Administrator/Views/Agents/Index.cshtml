@@ -5,26 +5,107 @@
 }
 
 @section scripts {
+    <link href="~/Content/spinjs/spin.css" rel="stylesheet" />
+    <script src="~/Content/spinjs/spin.js"></script>
+    <script>
+        $(function () {
+            initSpinner();
 
+            $('#delete-agent-btn').click(function () {
+                var checkedItems = $(".checkbox-col input:checked");
+                if (checkedItems.length == 0) {
+                    alert('Необходимо выбрать хотя бы 1 элемент.')
+                    return;
+                }
+                else {
+                    var isConfirmed = confirm("Вы действительно хотите удалить выбранные элементы?");
+                    if (isConfirmed)
+                        deleteItems();
+                }
+            });
 
+            $('#check-all-chck').click(function () {
+                if ($(this).is(':checked')) {
+                    $(".checkbox-col input").prop('checked', true);
+                } else {
+                    $(".checkbox-col input").prop('checked', false);
+                }
+            });
+
+            function deleteItems() {
+                var items = [];
+                $(".checkbox-col input:checked").each(function () {
+                    items.push(parseInt($(this).val()));
+                });
+                console.log(items);
+                startSpin();
+                $.ajax({
+                    url: "/Agents/Delete",
+                    data: JSON.stringify(items),
+                    type: 'post',
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.msg !== "Готово")
+                            alert(data.msg);
+                        stopSpin();
+                        location.reload();
+                    }
+                });
+            }
+
+            function initSpinner() {
+                var opts = {
+                    lines: 12, // The number of lines to draw
+                    length: 21, // The length of each line
+                    width: 17, // The line thickness
+                    radius: 43, // The radius of the inner circle
+                    scale: 1, // Scales overall size of the spinner
+                    corners: 1, // Corner roundness (0..1)
+                    color: '#298ecb', // CSS color or array of colors
+                    fadeColor: 'transparent', // CSS color or array of colors
+                    speed: 0.9, // Rounds per second
+                    rotate: 2, // The rotation offset
+                    animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+                    direction: 1, // 1: clockwise, -1: counterclockwise
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    top: '50%', // Top position relative to parent
+                    left: '50%', // Left position relative to parent
+                    shadow: '0 0 1px transparent', // Box-shadow for the lines
+                    position: 'absolute' // Element positioning
+                };
+                window.spinner = new Spinner(opts);
+            }
+        });
+
+        function startSpin() {
+            spinner.spin(document.getElementById('spinner-wrp'));
+        }
+        function stopSpin() {
+            spinner.stop();
+        }
+    </script>
 }
 
 <h2 class="page-header">@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
-
+<div id="spinner-wrp"></div>
 <div class="js-jobs-list">
     <div class="btn-toolbar btn-toolbar-top">
-        <button class="js-jobs-list-command btn btn-sm btn-primary">
-            <span class="glyphicon glyphicon-repeat"></span>
-            Обновить
-        </button>
+        <a href="/Agents">
+            <button class="js-jobs-list-command btn btn-sm btn-primary">
+                <span class="glyphicon glyphicon-repeat"></span>
+                Обновить
+            </button>
+        </a>
         <a href="/Agents/Add">
             <button class="js-jobs-list-command btn btn-sm btn-default">
                 <span class="glyphicon glyphicon-plus"></span>
                 Добавить
             </button>
         </a>
-        <button class="js-jobs-list-command btn btn-sm btn-default">
+        <button class="js-jobs-list-command btn btn-sm btn-default" id="delete-agent-btn">
             <span class="glyphicon glyphicon-remove"></span>
             Удалить выбранные
         </button>
@@ -35,7 +116,7 @@
             <thead>
                 <tr>
                     <th class="min-width">
-                        <input type="checkbox" class="js-jobs-list-select-all">
+                        <input type="checkbox" class="js-jobs-list-select-all" id="check-all-chck">
                     </th>
                     <th class="min-width">Ид</th>
                     <th class="min-width">Сервер</th>
@@ -47,8 +128,8 @@
                 @foreach (var item in Model)
                 {
                     <tr class="js-jobs-list-row  hover">
-                        <td>
-                            <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291237">
+                        <td class="checkbox-col">
+                            <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@item.Id">
                         </td>
                         <td class="min-width">
                             <a href="/Agents/Settings/@item.Id">#@item.Id</a>
@@ -74,7 +155,7 @@
     </div>
     <div class="btn-toolbar">
         <div class="btn-toolbar-label">
-            Всего элементов: 2
+            Всего элементов: @Model.Count
         </div>
     </div>
 </div>

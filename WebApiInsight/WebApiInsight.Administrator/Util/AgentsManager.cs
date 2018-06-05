@@ -39,5 +39,13 @@ namespace WebApiInsight.Administrator
                 return new List<AgentSettings>();
             return result.ToList();
         }
+
+        public void RemoveByIds(int[] ids)
+        {
+            var agents = GetAgents();
+            var remain = agents.Where(a => !ids.Contains(a.Id)).ToArray();
+            var json = new JavaScriptSerializer().Serialize(remain);
+            File.WriteAllText(ConfigPath, json);
+        }
     }
 }

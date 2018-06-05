@@ -25,6 +25,27 @@ namespace WebApiInsight.Administrator.Controllers
         }
 
         [HttpPost]
+        public JsonResult Delete(int[] ids)
+        {
+            try
+            {
+                var agentManager = new AgentsManager();
+                agentManager.RemoveByIds(ids);
+                return Json(new
+                {
+                    msg = "Готово"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    msg = "Непредвиденная ошибка сервера. Пожалуйста попробутей позже."
+                });
+            }
+        }
+
+        [HttpPost]
         public ActionResult Add(AddAgentViewModel model)
         {
             if (!ModelState.IsValid)
