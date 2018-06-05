@@ -1,6 +1,5 @@
 ﻿using System;
 using log4net;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -9,8 +8,8 @@ namespace WebApiInsight.Agent
 {
     public class AspNetCollector : BaseCollector
     {
-        public AspNetCollector(ILog logger, IDbManager dbManager)
-            : base(logger, dbManager)
+        public AspNetCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
+            : base(logger, dbManager, pauseOrStartEvent)
         {
         }
         
@@ -26,6 +25,7 @@ namespace WebApiInsight.Agent
             Logger.InfoFormat("Started asp.net metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
+                PauseOrStartEvent.WaitOne();
                 try
                 {
                     SaveMetrics();
@@ -62,6 +62,7 @@ namespace WebApiInsight.Agent
 
                 while (true)
                 {
+                    PauseOrStartEvent.WaitOne();
                     counters.ForEach(WriteRecord);
                     Thread.Sleep(Settings.ReadingInterval);
                 }

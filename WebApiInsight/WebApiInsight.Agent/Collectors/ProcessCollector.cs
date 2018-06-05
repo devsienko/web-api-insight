@@ -1,6 +1,5 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -9,8 +8,8 @@ namespace WebApiInsight.Agent
 {
     public class ProcessCollector : BaseCollector
     {
-        public ProcessCollector(ILog logger, IDbManager dbManager)
-            : base(logger, dbManager)
+        public ProcessCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
+            : base(logger, dbManager, pauseOrStartEvent)
         {
         }
 
@@ -28,6 +27,7 @@ namespace WebApiInsight.Agent
             Logger.InfoFormat("Started process metrics reading (for the pool {0})", Settings.PoolName);
             while (true)
             {
+                PauseOrStartEvent.WaitOne();
                 try
                 {
                     SaveMetrics();
@@ -63,6 +63,7 @@ namespace WebApiInsight.Agent
              
                 while (true)
                 {
+                    PauseOrStartEvent.WaitOne();
                     counters.ForEach(WriteRecord);
                     Thread.Sleep(Settings.ReadingInterval);
                 }
@@ -88,6 +89,7 @@ namespace WebApiInsight.Agent
             double zeroUsage = 0;
             while (!ProcessHelper.IsPoolAlive(iisPoolPid))
             {
+                PauseOrStartEvent.WaitOne();
                 DbManager.WriteMetricsValue("cpu", zeroUsage);
                 DbManager.WriteMetricsValue("memory_usage", zeroUsage);
                 Thread.Sleep(Settings.ReadingInterval * 2);

@@ -1,10 +1,12 @@
 ﻿using log4net;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace WebApiInsight.Agent
 {
     public abstract class BaseCollector
     {
+        protected ManualResetEvent PauseOrStartEvent;
         protected ILog Logger;
         protected IDbManager DbManager;
         protected string InstanceName; 
@@ -15,10 +17,11 @@ namespace WebApiInsight.Agent
 
         }
 
-        public BaseCollector(ILog logger, IDbManager dbManager)
+        public BaseCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
         {
             Logger = logger;
             DbManager = dbManager;
+            PauseOrStartEvent = pauseOrStartEvent;
 
             InitMetricRecords();
         }

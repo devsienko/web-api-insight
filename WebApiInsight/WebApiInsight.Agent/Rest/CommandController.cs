@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading;
+using System.Web.Http;
 
 namespace WebApiInsight.Agent.Rest
 {
@@ -8,6 +9,9 @@ namespace WebApiInsight.Agent.Rest
         [ActionName("Run")]
         public string Run()
         {
+            var startEvent = Request.Properties["StartStopEvent"] as ManualResetEvent;
+            if (startEvent != null)
+                startEvent.Set();
             return "Run";
         }
 
@@ -15,6 +19,9 @@ namespace WebApiInsight.Agent.Rest
         [ActionName("Stop")]
         public string Stop()
         {
+            var startEvent = Request.Properties["StartStopEvent"] as ManualResetEvent;
+            if (startEvent != null)
+                startEvent.Reset();
             return "stop";
         }
 
