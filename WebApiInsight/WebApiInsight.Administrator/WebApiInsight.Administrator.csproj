@@ -173,6 +173,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Util\AgentsManager.cs" />
     <Compile Include="Util\PathHelper.cs" />
     <Compile Include="Util\UserManager.cs" />
@@ -259,6 +260,7 @@
     <Content Include="Views\Agents\Index.cshtml" />
     <Content Include="Views\Agents\Settings.cshtml" />
     <Content Include="Views\Agents\Add.cshtml" />
+    <Content Include="Views\Menu\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
