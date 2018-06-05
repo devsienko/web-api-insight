@@ -35,7 +35,7 @@ namespace WebApiInsight.Agent
             var config = new HttpSelfHostConfiguration("http://localhost:" + Settings.ServerPort);
 
             config.Routes.MapHttpRoute(
-                "API Default", "api/{controller}/{id}",
+                "API Default", "api/{controller}/{action}/{id}",
                 new { id = RouteParameter.Optional });
 
             using (HttpSelfHostServer server = new HttpSelfHostServer(config))

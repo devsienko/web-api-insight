@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using WebApiInsight.Administrator.Models;
 
 namespace WebApiInsight.Administrator.Controllers
@@ -22,6 +23,42 @@ namespace WebApiInsight.Administrator.Controllers
         public ActionResult Add()
         {
             return View();
+        }
+
+        [HttpPost]
+        public JsonResult Stop(int id)
+        {
+            var agentManager = new AgentsManager();
+            agentManager.ChangeStatus(id, AgentStatus.Stopped);
+            return Json(new
+            {
+                msg = "Готово"
+            });
+        }
+
+        [HttpPost]
+        public JsonResult Start(int id)
+        {
+            var agentManager = new AgentsManager();
+            agentManager.ChangeStatus(id, AgentStatus.Working);
+            return Json(new
+            {
+                msg = "Готово"
+            });
+        }
+
+        [HttpPost]
+        public JsonResult Sync(AgentSettings agent)
+        {
+            var agentManager = new AgentsManager();
+            var dbAgent = agentManager.FindById(agent.Id);
+            var deserializer = new JavaScriptSerializer();
+            var config = deserializer.Deserialize<MetricsConfigContainer>(agent.JsonConfig);
+            SendAgentSettings(config, string.Format("http://{0}:{1}", dbAgent.IpAddress, dbAgent.Port));
+            return Json(new
+            {
+                msg = "Готово"
+            });
         }
 
         [HttpPost]
@@ -98,25 +135,21 @@ namespace WebApiInsight.Administrator.Controllers
 
         }
 
-        private void Test(string agentBaseAddress)
+        private void SendAgentSettings(MetricsConfigContainer config, string agentBaseAddress)
         {
-            //var SecurityToken = string.Empty;
-            //using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
-            //{
+            var SecurityToken = string.Empty;
+            using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
+            {
 
-            //    if (!string.IsNullOrEmpty(SecurityToken))
-            //        client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
-
-            //    var relativeUrl = "api/Configuration";
-
-
-            //    var result = client.PostAsJsonAsync(relativeUrl, requestDto).Result;
-
-            //    EnsureSuccess(result);
-
-            //    return result.Content.ReadAsAsync<ApiResponse>().Result;
-
-            //}
+                if (!string.IsNullOrEmpty(SecurityToken))
+                    client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
+                var relativeUrl = "api/Configuration/Post";
+                var response = client.PostAsJsonAsync(relativeUrl, config).Result;
+                EnsureSuccess(response);
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                if(!result)
+                    throw new Exception("Ошибка вызова интерфейса конфигурации агента.");
+            }
         }
 
         public string PingAgent(string agentBaseAddress)
@@ -126,7 +159,7 @@ namespace WebApiInsight.Administrator.Controllers
             {
                 if (!string.IsNullOrEmpty(SecurityToken))
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
-                var relativeUrl = "api/Ping";
+                var relativeUrl = "api/Command/Ping";
                 try
                 {
                     var response = client.GetAsync(relativeUrl).Result;
@@ -151,7 +184,7 @@ namespace WebApiInsight.Administrator.Controllers
             {
                 if (!string.IsNullOrEmpty(SecurityToken))
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
-                var relativeUrl = "api/Configuration";
+                var relativeUrl = "api/Configuration/Get";
                 var response = client.GetAsync(relativeUrl).Result;
                 EnsureSuccess(response);
                 var result = response.Content.ReadAsAsync<MetricsConfigContainer>().Result;

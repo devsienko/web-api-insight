@@ -7,6 +7,9 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link rel="icon" type="image/png" href="/favicon.ico" sizes="16x16">
+    <link href="~/Content/spinjs/spin.css" rel="stylesheet" />
+    <script src="~/Content/spinjs/spin.js"></script>
+    
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -46,6 +49,43 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+        @RenderSection("scripts", required: false)
+<div id="spinner-wrp"></div>
+    <script>
+        $(function () {
+            initSpinner();
+
+            function initSpinner() {
+                var opts = {
+                    lines: 12, // The number of lines to draw
+                    length: 21, // The length of each line
+                    width: 17, // The line thickness
+                    radius: 43, // The radius of the inner circle
+                    scale: 1, // Scales overall size of the spinner
+                    corners: 1, // Corner roundness (0..1)
+                    color: '#298ecb', // CSS color or array of colors
+                    fadeColor: 'transparent', // CSS color or array of colors
+                    speed: 0.9, // Rounds per second
+                    rotate: 2, // The rotation offset
+                    animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+                    direction: 1, // 1: clockwise, -1: counterclockwise
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    top: '50%', // Top position relative to parent
+                    left: '50%', // Left position relative to parent
+                    shadow: '0 0 1px transparent', // Box-shadow for the lines
+                    position: 'absolute' // Element positioning
+                };
+                window.spinner = new Spinner(opts);
+            }
+        });
+
+        function startSpin() {
+            window.spinner.spin(document.getElementById('spinner-wrp'));
+        }
+        function stopSpin() {
+            window.spinner.stop();
+        }
+    </script>
 </body>
 </html>

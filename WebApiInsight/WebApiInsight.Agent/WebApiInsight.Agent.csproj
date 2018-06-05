@@ -88,7 +88,7 @@
     <Compile Include="InfluxDbManager.cs" />
     <Compile Include="IDbManager.cs" />
     <Compile Include="Rest\Configuration.cs" />
-    <Compile Include="Rest\PingController.cs" />
+    <Compile Include="Rest\CommandController.cs" />
     <Compile Include="Rest\ConfigurationController.cs" />
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
     <Compile Include="Util\AppInfo.cs" />

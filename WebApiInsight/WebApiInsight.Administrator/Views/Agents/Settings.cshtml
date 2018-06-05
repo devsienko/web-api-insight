@@ -1,4 +1,5 @@
-﻿@model WebApiInsight.Administrator.Models.AgentSettings
+﻿@using WebApiInsight.Administrator.Models
+@model WebApiInsight.Administrator.Models.AgentSettings
 @{
     ViewBag.Title = "Настройки агента #" + ViewBag.AgentId;
 }
@@ -7,13 +8,77 @@
     <script src="../../Content/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script>
         $(function () {
-            var editor = ace.edit("editor");
-            editor.session.setMode("ace/mode/json");
-            editor.getSession().setTabSize(2);
-            editor.getSession().setUseWrapMode(true);
-        })
+            function initEditor() {
+                window.editor = ace.edit("editor");
+                editor.session.setMode("ace/mode/json");
+                editor.getSession().setTabSize(2);
+                editor.getSession().setUseWrapMode(true);
+            }
+
+            initEditor();
+
+            $('#stop-agent-btn').click(function () {
+                var agentId = document.getElementById('Id').value;
+                startSpin();
+                $.ajax({
+                    url: "/Agents/Stop/",
+                    data: JSON.stringify({ id: agentId }),
+                    type: 'post',
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.msg !== "Готово")
+                            alert(data.msg);
+                        stopSpin();
+                        location.reload();
+                    }
+                });
+            });
+
+            $('#start-agent-btn').click(function () {
+                var agentId = document.getElementById('Id').value;
+                startSpin();
+                $.ajax({
+                    url: "/Agents/Start/",
+                    data: JSON.stringify({ id: agentId }),
+                    type: 'post',
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.msg !== "Готово")
+                            alert(data.msg);
+                        stopSpin();
+                        location.reload();
+                    }
+                });
+            });
+
+            $('#sync-btn').click(function () {
+                var agentId = document.getElementById('Id').value;
+                startSpin();
+                $.ajax({
+                    url: "/Agents/Sync/",
+                    data: JSON.stringify({
+                        id: agentId,
+                        jsonConfig: editor.getValue()
+                    }),
+                    type: 'post',
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.msg !== "Готово")
+                            alert(data.msg);
+                        stopSpin();
+                        location.reload();
+                    }
+                });
+            });
+        });
     </script>
 }
+
+@Html.HiddenFor(model => model.Id)
+
 
 <h2 class="page-header">@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
@@ -31,10 +96,26 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 text-right">
         <h3>
-            <span class="job-snippet-buttons pull-right">
-                <button class="btn btn-sm btn-death" data-ajax="/wgl/hangfire/jobs/actions/delete/1291237" data-loading-text="Deleting..." data-confirm="Do you really want to delete this job?">
+            <span class="job-snippet-buttons">
+               @if (Model.Status == AgentStatus.Working)
+               {
+                    <button class="js-jobs-list-command btn btn-sm btn-default" id="stop-agent-btn">
+                        <span class="glyphicon glyphicon-pause"></span>
+                        Остановить
+                    </button>
+               }
+               else
+               {
+                    <button class="js-jobs-list-command btn btn-sm btn-default"  id="start-agent-btn">
+                        <span class="glyphicon glyphicon-play"></span>
+                        Запустить
+                    </button>
+               }
+            </span>
+            <span class="job-snippet-buttons">
+                <button class="btn btn-sm btn-death" id="sync-btn">
                     Сохранить
                 </button>
             </span>

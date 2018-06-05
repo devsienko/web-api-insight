@@ -4,15 +4,15 @@ namespace WebApiInsight.Agent.Rest
 {
     public class ConfigurationController : ApiController
     {
-        public MetricsConfigContainer GetConfiguration()
+        public MetricsConfigContainer Get()
         {
             var result = MetricsConfigManager.GetMetricsConfig();
             return result;
         }
 
-        public bool Post(Configuration newConfig)
+        public bool Post(MetricsConfigContainer newConfig)
         {
-            //MetricsConfigManager.UpdateMetricsConfig(newConfig);
+            MetricsConfigManager.UpdateMetricsConfig(newConfig);
             //todo: force agent read new metrics
             return true;
         }

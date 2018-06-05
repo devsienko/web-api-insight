@@ -30,6 +30,15 @@ namespace WebApiInsight.Administrator
             return result;
         }
 
+        public void ChangeStatus(int agentId, string status)
+        {
+            var agents = GetAgents();
+            var agent = agents.FirstOrDefault(a => a.Id == agentId);
+            agent.Status = status;
+            var json = new JavaScriptSerializer().Serialize(agents);
+            File.WriteAllText(ConfigPath, json);
+        }
+
         public List<AgentSettings> GetAgents()
         {
             var jsonConfig = File.ReadAllText(ConfigPath);
