@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<WebApiInsight.Administrator.Models.AgentSettings>
+
+@{
     ViewBag.Title = "Агенты";
 }
 
@@ -42,46 +44,31 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="js-jobs-list-row  hover">
-                    <td>
-                        <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291237">
-                    </td>
-                    <td class="min-width">
-                        <a href="/Agents/Settings/1">#1</a>
-                    </td>
-                    <td class="min-width">
-                        <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">wtf5757:11352</span>
-                    </td>
-                    <td class="word-break">
+                @foreach (var item in Model)
+                {
+                    <tr class="js-jobs-list-row  hover">
+                        <td>
+                            <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291237">
+                        </td>
+                        <td class="min-width">
+                            <a href="/Agents/Settings/@item.Id">#@item.Id</a>
+                        </td>
+                        <td class="min-width">
+                            <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">
+                                @item.IpAddress:@item.Port
+                            </span>
+                        </td>
+                        <td class="word-break">
 
-                        <a class="job-method" href="/Agents/Settings/1">Запущен</a>
-                    </td>
-                    <td class="align-right" style="text-align: right;">
-                        <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">
-                            2 дня назад
-                        </span>
-                    </td>
-                </tr>
-                <tr class="js-jobs-list-row  hover">
-                    <td>
-                        <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="1291236">
-                    </td>
-                    <td class="min-width">
-                        <a href="/Agents/Settings/2">#2</a>
-                    </td>
-                    <td class="min-width">
-                        <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">wtf5757:11352</span>
-                    </td>
-                    <td class="word-break">
-
-                        <a class="job-method" href="/Agents/Settings/2">Проистановлен</a>
-                    </td>
-                    <td class="align-right" style="text-align: right;">
-                        <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">
-                            2 дня назад
-                        </span>
-                    </td>
-                </tr>
+                            <a class="job-method" href="/Agents/Settings/1">@item.Status</a>
+                        </td>
+                        <td class="align-right" style="text-align: right;">
+                            <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">
+                                @item.CreationDate
+                            </span>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Mvc;
 using WebApiInsight.Administrator.Models;
@@ -13,7 +14,9 @@ namespace WebApiInsight.Administrator.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            var agentManager = new AgentsManager();
+            var agents = agentManager.GetAgents();
+            return View(agents);
         }
 
         public ActionResult Add()
@@ -24,27 +27,53 @@ namespace WebApiInsight.Administrator.Controllers
         [HttpPost]
         public ActionResult Add(AddAgentViewModel model)
         {
-            ModelState.AddModelError("", "test");
-            var agentResponse = PingAgent(string.Format("http://{0}:{1}", model.IpAddress, model.Port));
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Неправильные данные формы создания.");
+                return View();
+            }
+            var agentManager = new AgentsManager();
+            var existedAgent = agentManager
+                .GetAgents()
+                .FirstOrDefault(a => a.IpAddress == model.IpAddress && a.Port == model.Port);
+            if (existedAgent != null)
+            {
+                ModelState.AddModelError("", "Агент уже зарегистрирован.");
+                return View();
+            }
+            var agentAddress = string.Format("http://{0}:{1}", model.IpAddress, model.Port);
+            var agentResponse = PingAgent(agentAddress);
             if (agentResponse.Equals(AgentPingResponse))
+            {
+                //var agentSettings = GetAgentConfig(agentAddress);
+                var agent = new AgentSettings
+                {
+                    Status = AgentStatus.Working,
+                    CreationDate = DateTime.UtcNow,
+                    IpAddress = model.IpAddress,
+                    Port = model.Port
+                };
+                agentManager.Add(agent);
                 return RedirectToAction("Index", "Agents");
+            }
             ModelState.AddModelError("", "Не удалось установить соединение с агентом.");
             return View();
         }
 
         public ActionResult Settings(int id)
         {
-            var config = GetAgentConfig("http://localhost:4545/", id.ToString());
-            var json = JsonConvert.SerializeObject(config, Formatting.Indented); ;//new JavaScriptSerializer().Serialize(config, Formatting.Indented);
-            var model = new AgentSettingsModel
+            var agentManager = new AgentsManager();
+            var agent = agentManager.FindById(id);
+            if(agent == null)
             {
-                JsonConfig = json,
-                Server = "localhost:4545",
-                Status = "запущен",
-                CreationDate = new DateTime(2018, 06, 06)
-            };
-            ViewBag.AgentId = id;
-            return View(model);
+                ModelState.AddModelError("", string.Format("Агент с Id={0} не найден.", id));
+                return View();
+            }
+
+            var config = GetAgentConfig(string.Format("http://{0}:{1}/", agent.IpAddress, agent.Port));
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented); ;//new JavaScriptSerializer().Serialize(config, Formatting.Indented);
+            agent.JsonConfig = json;
+            return View(agent);
 
         }
 
@@ -77,17 +106,24 @@ namespace WebApiInsight.Administrator.Controllers
                 if (!string.IsNullOrEmpty(SecurityToken))
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
                 var relativeUrl = "api/Ping";
-                var response = client.GetAsync(relativeUrl).Result;
-                if (!response.IsSuccessStatusCode)
+                try
+                {
+                    var response = client.GetAsync(relativeUrl).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return string.Empty;
+                    }
+                    var result = response.Content.ReadAsAsync<string>().Result;
+                    return result;
+                }
+                catch(Exception ex)
                 {
                     return string.Empty;
                 }
-                var result = response.Content.ReadAsAsync<string>().Result;
-                return result;
             }
         }
         
-        public MetricsConfigContainer GetAgentConfig(string agentBaseAddress, string agentId)
+        public MetricsConfigContainer GetAgentConfig(string agentBaseAddress)
         {
             var SecurityToken = string.Empty;//todo: user token for the api requests
             using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
@@ -96,17 +132,17 @@ namespace WebApiInsight.Administrator.Controllers
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
                 var relativeUrl = "api/Configuration";
                 var response = client.GetAsync(relativeUrl).Result;
-                EnsureSuccess(response, agentId);
+                EnsureSuccess(response);
                 var result = response.Content.ReadAsAsync<MetricsConfigContainer>().Result;
                 return result;
             }
         }
         
-        private static void EnsureSuccess(HttpResponseMessage result, string agentId)
+        private static void EnsureSuccess(HttpResponseMessage result)
         {
             if (!result.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("Ошибка вызова интерфейса конфигурации агента: {0}", agentId));
+                throw new Exception(string.Format("Ошибка вызова интерфейса конфигурации агента."));
             }
         }
     }

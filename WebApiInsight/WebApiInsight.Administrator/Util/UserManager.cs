@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Microsoft.AspNet.Identity;
@@ -13,7 +12,7 @@ namespace WebApiInsight.Administrator
     public class UserManager : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>, 
         IUserLockoutStore<ApplicationUser, string>
     {
-        private readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "Conf/users.json");
+        private readonly string ConfigPath = Path.Combine(PathHelper.GetAssemblyLocation(), "Conf/users.json");
 
         public Task CreateAsync(ApplicationUser user)
         {
@@ -25,15 +24,6 @@ namespace WebApiInsight.Administrator
             File.WriteAllText(ConfigPath, json);
             return Task.FromResult(0);
 
-        }
-
-        private static string GetAssemblyLocation()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var codebase = new Uri(assembly.CodeBase);
-            var path = Path.GetDirectoryName(codebase.LocalPath);
-            var result = Directory.GetParent(path).FullName;
-            return result;
         }
 
         public Task DeleteAsync(ApplicationUser user)
@@ -60,6 +50,8 @@ namespace WebApiInsight.Administrator
             var jsonConfig = File.ReadAllText(ConfigPath);
             var deserializer = new JavaScriptSerializer();
             var result = deserializer.Deserialize<ApplicationUser[]>(jsonConfig);
+            if (result == null)
+                return new List<ApplicationUser>();
             return result.ToList();
         }
 

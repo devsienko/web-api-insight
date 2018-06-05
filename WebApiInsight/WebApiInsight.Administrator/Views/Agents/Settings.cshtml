@@ -1,4 +1,4 @@
-﻿@model WebApiInsight.Administrator.Models.AgentSettingsModel
+﻿@model WebApiInsight.Administrator.Models.AgentSettings
 @{
     ViewBag.Title = "Настройки агента #" + ViewBag.AgentId;
 }
@@ -47,7 +47,7 @@
         <div class="job-snippet-properties">
             <dl>
                 <dt>Сервер</dt>
-                <dd><pre><code>@Model.Server</code></pre></dd>
+                <dd><pre><code>@Model.IpAddress:@Model.Port</code></pre></dd>
                 <dt>Статус</dt>
                 <dd><pre><code>@Model.Status</code></pre></dd>
                 <dt>Добавлен</dt>

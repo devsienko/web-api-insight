@@ -57,29 +57,6 @@ namespace WebApiInsight.Administrator.Models
         public string ConfirmPassword { get; set; }
     }
 
-    public class AddAgentViewModel
-    {
-        [Required]
-        [DataType(DataType.Text)]
-        //[StringLength(15, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 15)]
-        [Display(Name = "IP-адрес")]
-        public string IpAddress { get; set; }
-
-        [Required]
-        //[StringLength(4, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 4)]
-        [DataType(DataType.PostalCode)]
-        [Display(Name = "Порт")]
-        public string Port { get; set; }
-    }
-
-    public class AgentSettingsModel
-    {
-        public string JsonConfig { get; set; }
-        public string Server { get; set; }
-        public string Status { get; set; }
-        public DateTime CreationDate { get; set; }
-    }
-
     public class AddPhoneNumberViewModel
     {
         [Required]
