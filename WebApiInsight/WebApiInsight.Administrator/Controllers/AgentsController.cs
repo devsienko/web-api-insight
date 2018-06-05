@@ -29,7 +29,9 @@ namespace WebApiInsight.Administrator.Controllers
         public JsonResult Stop(int id)
         {
             var agentManager = new AgentsManager();
+            var agent = agentManager.FindById(id);
             agentManager.ChangeStatus(id, AgentStatus.Stopped);
+            RunAgentCommand(string.Format("http://{0}:{1}", agent.IpAddress, agent.Port), "Stop");
             return Json(new
             {
                 msg = "Готово"
@@ -40,6 +42,8 @@ namespace WebApiInsight.Administrator.Controllers
         public JsonResult Start(int id)
         {
             var agentManager = new AgentsManager();
+            var agent = agentManager.FindById(id);
+            RunAgentCommand(string.Format("http://{0}:{1}", agent.IpAddress, agent.Port), "Run");
             agentManager.ChangeStatus(id, AgentStatus.Working);
             return Json(new
             {
@@ -176,7 +180,22 @@ namespace WebApiInsight.Administrator.Controllers
                 }
             }
         }
-        
+
+        public string RunAgentCommand(string agentBaseAddress, string command)
+        {
+            var SecurityToken = string.Empty;//todo: user token for the api requests
+            using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
+            {
+                if (!string.IsNullOrEmpty(SecurityToken))
+                    client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
+                var relativeUrl = "api/Command/" + command;
+                var response = client.GetAsync(relativeUrl).Result;
+                EnsureSuccess(response);
+                var result = response.Content.ReadAsAsync<string>().Result;
+                return result;
+            }
+        }
+
         public MetricsConfigContainer GetAgentConfig(string agentBaseAddress)
         {
             var SecurityToken = string.Empty;//todo: user token for the api requests

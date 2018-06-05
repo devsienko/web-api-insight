@@ -12,7 +12,7 @@ namespace WebApiInsight.Agent.Rest
             var startEvent = Request.Properties["StartStopEvent"] as ManualResetEvent;
             if (startEvent != null)
                 startEvent.Set();
-            return "Run";
+            return "Готово";
         }
 
         [HttpGet]
@@ -22,7 +22,7 @@ namespace WebApiInsight.Agent.Rest
             var startEvent = Request.Properties["StartStopEvent"] as ManualResetEvent;
             if (startEvent != null)
                 startEvent.Reset();
-            return "stop";
+            return "Готово";
         }
 
         [HttpGet]

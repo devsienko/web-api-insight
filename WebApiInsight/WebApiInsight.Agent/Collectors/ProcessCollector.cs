@@ -60,7 +60,6 @@ namespace WebApiInsight.Agent
                 .ToList();
             try
             {
-             
                 while (true)
                 {
                     PauseOrStartEvent.WaitOne();
