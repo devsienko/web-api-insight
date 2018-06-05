@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Web.Mvc;
 using WebApiInsight.Administrator.Models;
@@ -33,16 +34,18 @@ namespace WebApiInsight.Administrator.Controllers
 
         public ActionResult Settings(int id)
         {
-            //ViewBag.AgentConfiguration = GetAgentConfiguration("http://localhost:4545/", id.ToString());
+            var config = GetAgentConfig("http://localhost:4545/", id.ToString());
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented); ;//new JavaScriptSerializer().Serialize(config, Formatting.Indented);
             var model = new AgentSettingsModel
             {
-                JsonConfig = @"{""AspNetMetricsConfig"":[{""Measurement"":""req - per - sec"",""CategoryName"":""ASP.NET Applications"",""CounterName"":""Requests / Sec""}],""ProccessMetricsConfig"": [{""Measurement"":""req - per - sec"",""CategoryName"":""ASP.NET Applications"",""CounterName"":""Requests / Sec""}]}",
+                JsonConfig = json,
                 Server = "localhost:4545",
                 Status = "запущен",
                 CreationDate = new DateTime(2018, 06, 06)
             };
             ViewBag.AgentId = id;
             return View(model);
+
         }
 
         private void Test(string agentBaseAddress)
@@ -84,14 +87,14 @@ namespace WebApiInsight.Administrator.Controllers
             }
         }
         
-        public MetricsConfigContainer GetAgentConfiguration(string agentBaseAddress, string agentId)
+        public MetricsConfigContainer GetAgentConfig(string agentBaseAddress, string agentId)
         {
             var SecurityToken = string.Empty;//todo: user token for the api requests
             using (var client = new HttpClient { BaseAddress = new Uri(agentBaseAddress) })
             {
                 if (!string.IsNullOrEmpty(SecurityToken))
                     client.DefaultRequestHeaders.Add("Authorization", SecurityToken);
-                var relativeUrl = "api/Ping";
+                var relativeUrl = "api/Configuration";
                 var response = client.GetAsync(relativeUrl).Result;
                 EnsureSuccess(response, agentId);
                 var result = response.Content.ReadAsAsync<MetricsConfigContainer>().Result;

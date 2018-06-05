@@ -4,10 +4,9 @@ namespace WebApiInsight.Agent.Rest
 {
     public class ConfigurationController : ApiController
     {
-        public Configuration GetConfiguration()
+        public MetricsConfigContainer GetConfiguration()
         {
-            var result = new Configuration();
-            result.JsonConfig = MetricsConfigManager.GetMetricsConfig();
+            var result = MetricsConfigManager.GetMetricsConfig();
             return result;
         }
 

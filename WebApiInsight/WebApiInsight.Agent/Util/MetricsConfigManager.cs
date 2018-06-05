@@ -9,9 +9,9 @@ namespace WebApiInsight.Agent
     {
         private static readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "MetricsConfig.json");
 
-        public static string GetMetricsConfig()
+        public static MetricsConfigContainer GetMetricsConfig()
         {
-            var result = File.ReadAllText(ConfigPath);
+            var result = ReadMetricsConfig();
             return result;
         }
 
