@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -69,6 +70,14 @@ namespace WebApiInsight.Administrator.Models
         [DataType(DataType.PostalCode)]
         [Display(Name = "Порт")]
         public string Port { get; set; }
+    }
+
+    public class AgentSettingsModel
+    {
+        public string JsonConfig { get; set; }
+        public string Server { get; set; }
+        public string Status { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 
     public class AddPhoneNumberViewModel

@@ -33,9 +33,16 @@ namespace WebApiInsight.Administrator.Controllers
 
         public ActionResult Settings(int id)
         {
-            ViewBag.AgentConfiguration = GetAgentConfiguration("http://localhost:4545/", id.ToString());
+            //ViewBag.AgentConfiguration = GetAgentConfiguration("http://localhost:4545/", id.ToString());
+            var model = new AgentSettingsModel
+            {
+                JsonConfig = @"{""AspNetMetricsConfig"":[{""Measurement"":""req - per - sec"",""CategoryName"":""ASP.NET Applications"",""CounterName"":""Requests / Sec""}],""ProccessMetricsConfig"": [{""Measurement"":""req - per - sec"",""CategoryName"":""ASP.NET Applications"",""CounterName"":""Requests / Sec""}]}",
+                Server = "localhost:4545",
+                Status = "запущен",
+                CreationDate = new DateTime(2018, 06, 06)
+            };
             ViewBag.AgentId = id;
-            return View();
+            return View(model);
         }
 
         private void Test(string agentBaseAddress)
@@ -76,8 +83,7 @@ namespace WebApiInsight.Administrator.Controllers
                 return result;
             }
         }
-
-
+        
         public MetricsConfigContainer GetAgentConfiguration(string agentBaseAddress, string agentId)
         {
             var SecurityToken = string.Empty;//todo: user token for the api requests
