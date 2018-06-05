@@ -114,4 +114,5 @@ span.metric {
     left: 0;
     border-radius: 5px;
     margin: 0 15px;
+    border: 1px solid #efefef;
 }

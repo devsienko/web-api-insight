@@ -13,7 +13,7 @@ namespace WebApiInsight.Administrator
     public class UserManager : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>, 
         IUserLockoutStore<ApplicationUser, string>
     {
-        private readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "users.json");
+        private readonly string ConfigPath = Path.Combine(GetAssemblyLocation(), "Conf/users.json");
 
         public Task CreateAsync(ApplicationUser user)
         {
@@ -168,6 +168,5 @@ namespace WebApiInsight.Administrator
             // GC.SuppressFinalize(this);
         }
         #endregion
-
     }
 }

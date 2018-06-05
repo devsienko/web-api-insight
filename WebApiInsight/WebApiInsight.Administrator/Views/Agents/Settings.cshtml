@@ -32,30 +32,27 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <div class="job-snippet-properties">
-            <dl>
-                <dt>Сервер</dt>
-                <dd><pre><code>127.0.0.1</code></pre></dd>
-                <dt>Статус</dt>
-                <dd><pre><code>запущен</code></pre></dd>
-                <dt>Добавлен</dt>
-                <dd><pre><code>22.05.2018</code></pre></dd>
-            </dl>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
         <h3>
             <span class="job-snippet-buttons pull-right">
-                <button class="btn btn-sm btn-default" data-ajax="/wgl/hangfire/jobs/actions/requeue/1291237" data-loading-text="Enqueueing...">
-                    Обновить
-                </button>
                 <button class="btn btn-sm btn-death" data-ajax="/wgl/hangfire/jobs/actions/delete/1291237" data-loading-text="Deleting..." data-confirm="Do you really want to delete this job?">
-                    Удалить
+                    Сохранить
                 </button>
             </span>
         </h3>
 
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="job-snippet-properties">
+            <dl>
+                <dt>Сервер</dt>
+                <dd><pre><code>@Model.Server</code></pre></dd>
+                <dt>Статус</dt>
+                <dd><pre><code>@Model.Status</code></pre></dd>
+                <dt>Добавлен</dt>
+                <dd><pre><code>@Model.CreationDate</code></pre></dd>
+            </dl>
+        </div>
     </div>
 </div>

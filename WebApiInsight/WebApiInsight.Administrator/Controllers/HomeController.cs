@@ -7,15 +7,6 @@ namespace WebApiInsight.Administrator.Controllers
     {
         public ActionResult Index()
         {
-            //var configPath = Server.MapPath(Url.Content("~/users.json"));
-            //var users = new ApplicationUser[] {
-            //    new ApplicationUser
-            //    {
-            //        UserName = "daniil"
-            //    }
-            //};
-            //var json = new JavaScriptSerializer().Serialize(users);
-            //System.IO.File.WriteAllText(configPath, json);
             return View();
         }
 
