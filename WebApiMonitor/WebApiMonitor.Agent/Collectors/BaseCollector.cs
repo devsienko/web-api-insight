@@ -1,4 +1,5 @@
 ﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -44,6 +45,8 @@ namespace WebApiMonitor.Agent
         protected void WriteRecord(MeasurementData md)
         {
             var value = md.Counter.NextValue();
+            if (md.Measurement == "cpu")
+                value = value / Environment.ProcessorCount;
             DbManager.WriteMetricsValue(md.Measurement, value);
         }
     }
