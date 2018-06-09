@@ -130,8 +130,7 @@ namespace WebApiMonitor.Administrator.Controllers
                 //    return RedirectToAction("Index", "Home");
                 //}
                 //AddErrors(result);
-                SignIn(model.Email, false);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Users", "Manage");
             }
 
             // If we got this far, something failed, redisplay form

@@ -33,6 +33,27 @@ namespace WebApiMonitor.Administrator.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public JsonResult Delete(string[] ids)
+        {
+            try
+            {
+                var userManager = new UserManager();
+                userManager.RemoveByIds(ids);
+                return Json(new
+                {
+                    msg = "Готово"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    msg = "Непредвиденная ошибка сервера. Пожалуйста попробутей позже."
+                });
+            }
+        }
+
         //
         // POST: /Manage/RemoveLogin
         [HttpPost]

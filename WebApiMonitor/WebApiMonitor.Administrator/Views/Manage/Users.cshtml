@@ -4,35 +4,79 @@
     ViewBag.Title = "Управление пользователями";
 }
 
-<h2>@ViewBag.Title.</h2>
+@section scripts {
+    <script src="~/Content/Scripts/UsersList.js"></script>
+}
+
+<h2 class="page-header">@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
-@{
-    if (Model.Users.Count > 0)
+
+<div class="btn-toolbar btn-toolbar-top">
+    <a href="/Manage/Users">
+        <button class="js-jobs-list-command btn btn-sm btn-primary">
+            <span class="glyphicon glyphicon-repeat"></span>
+            Обновить
+        </button>
+    </a>
+    <a href="/Account/Register">
+        <button class="js-jobs-list-command btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-plus"></span>
+            Добавить
+        </button>
+    </a>
+    <button class="js-jobs-list-command btn btn-sm btn-default" id="delete-user-btn">
+        <span class="glyphicon glyphicon-remove"></span>
+        Удалить выбранные
+    </button>
+    <div class="btn-toolbar-spacer pull-right"></div>
+</div>
+
+<div class="js-jobs-list">
+    @if (Model.Users.Count > 0)
     {
-        <h4>Пользователи</h4>
+        <div class="table-responsive">
             <table class="table">
+                <thead>
+                    <tr>
+                        <th class="min-width" style="width: 25px">
+                            <input type="checkbox" class="js-jobs-list-select-all" id="check-all-chck">
+                        </th>
+                        <th class="min-width">Email</th>
+                        <th class="align-right" style="text-align: right;">Добавлен</th>
+                    </tr>
+                </thead>
                 <tbody>
                     @foreach (var login in Model.Users)
                     {
-                        <tr>
-                            <td>@login.UserName</td>
-                            <td style="text-align: right;">
-                                @using (Html.BeginForm("RemoveLogin", "Manage"))
-                                {
-                                @Html.AntiForgeryToken()
-                                <div>
-                                    <input type="submit" class="btn btn-default" value="Удалить" />
-                                </div>
-                                }
+                        <tr class="js-jobs-list-row  hover">
+                            <td class="checkbox-col">
+                                <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@login.Id">
+                            </td>
+                            <td class="min-width">
+                                <a href="/Agents/Settings/@login.Id">@login.UserName</a>
+                            </td>
+                            <td class="align-right" style="text-align: right;">
+                                <span data-moment="1527845460">
+                                    @login.CreatingDate
+                                </span>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
+        <div class="btn-toolbar">
+            <div class="btn-toolbar-label">
+                Всего элементов: @Model.Users.Count
+            </div>
+        </div>
     }
-    else 
+    else
     {
-        <span>Список пользователей пуст</span>
+        <div class="table-responsive" style="padding: 15px 0;">
+            <span>Список пользователей пуст</span>
+        </div>
     }
-}
+</div>

@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -200,6 +201,8 @@
     <Content Include="Content\ace-builds\src-noconflict\worker-json.js" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Scripts\UsersList.js" />
+    <Content Include="Content\Scripts\AgentsList.js" />
     <Content Include="Content\spinjs\spin.css" />
     <Content Include="Content\spinjs\spin.js" />
     <Content Include="favicon.ico" />

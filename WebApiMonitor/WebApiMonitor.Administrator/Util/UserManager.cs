@@ -18,6 +18,7 @@ namespace WebApiMonitor.Administrator
         {
             var users = GetUsers();
             user.Id = Guid.NewGuid().ToString();
+            user.CreatingDate = DateTime.Now;
             user.UserName = user.Email;
             users.Add(user);
             var json = new JavaScriptSerializer().Serialize(users);
@@ -53,6 +54,14 @@ namespace WebApiMonitor.Administrator
             if (result == null)
                 return new List<ApplicationUser>();
             return result.ToList();
+        }
+
+        public void RemoveByIds(string[] ids)
+        {
+            var users = GetUsers();
+            var remain = users.Where(a => !ids.Contains(a.Id)).ToArray();
+            var json = new JavaScriptSerializer().Serialize(remain);
+            File.WriteAllText(ConfigPath, json);
         }
 
         public Task UpdateAsync(ApplicationUser user)
