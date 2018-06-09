@@ -52,7 +52,7 @@ namespace WebApiMonitor.Administrator.Controllers
             
             if (user != null && PasswordHelper.PasswordsEqual(user.PasswordHash, user.PasswordSalt, model.Password))
             {
-                SignIn(model.Email);
+                SignIn(model.Email, model.RememberMe);
                 if (string.IsNullOrEmpty(returnUrl))
                     return RedirectToAction("Index", "Home");
                 return RedirectToLocal(returnUrl);
@@ -75,10 +75,13 @@ namespace WebApiMonitor.Administrator.Controllers
             //}
         }
 
-        private void SignIn(string email)
+        private void SignIn(string email, bool remeberMe)
         {
             FormsAuthentication.SetAuthCookie(email, false);
 
+            var expDate = remeberMe
+                ? DateTime.Now.AddYears(1)
+                : DateTime.Now.AddMinutes(30);
             var authTicket = new FormsAuthenticationTicket(1,email, DateTime.Now, DateTime.Now.AddMinutes(20), false, string.Empty);
             string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
             var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
@@ -127,7 +130,7 @@ namespace WebApiMonitor.Administrator.Controllers
                 //    return RedirectToAction("Index", "Home");
                 //}
                 //AddErrors(result);
-                SignIn(model.Email);
+                SignIn(model.Email, false);
                 return RedirectToAction("Index", "Home");
             }
 
