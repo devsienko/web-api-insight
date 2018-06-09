@@ -1,8 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.IO;
-using System.Reflection;
-using System.Web.Script.Serialization;
+﻿using System.Configuration;
 
 namespace WebApiMonitor.Agent
 {

@@ -55,7 +55,7 @@ namespace WebApiMonitor.Agent
         {
             var config = new HttpSelfHostConfiguration("http://localhost:" + Settings.ServerPort);
 
-            config.MessageHandlers.Add(new Test(pauseOrStartEvent));
+            config.MessageHandlers.Add(new EventsDelegatingHandler(pauseOrStartEvent));
 
             config.Routes.MapHttpRoute(
                 "API Default", "api/{controller}/{action}/{id}",
@@ -70,10 +70,10 @@ namespace WebApiMonitor.Agent
         }
     }
 
-    class Test : DelegatingHandler
+    class EventsDelegatingHandler : DelegatingHandler
     {
         private ManualResetEvent _pauseOrStartEvent;
-        public Test(ManualResetEvent pauseOrStartEvent)
+        public EventsDelegatingHandler(ManualResetEvent pauseOrStartEvent)
         {
             _pauseOrStartEvent = pauseOrStartEvent;
         }
