@@ -31,10 +31,10 @@ namespace WebApiMonitor.Agent
 
             collectorThreads.ForEach(t => t.Start());
 
-            StartRestServer();
-
             var iisReader = new IisLogCollector(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
             iisReader.Process();
+
+            StartRestServer();
         }
 
         //static void DoSomething()

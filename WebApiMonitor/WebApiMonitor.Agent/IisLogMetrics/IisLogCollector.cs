@@ -1,5 +1,5 @@
 ﻿using log4net;
-using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -27,6 +27,26 @@ namespace WebApiMonitor.Agent
                 .OrderByDescending(f => f.LastWriteTime)
                 .First().FullName;
             InitLogFileWatcher(logsPath);
+
+            FlushIisLogsPeriodically();
+        }
+
+        private void FlushIisLogsPeriodically()
+        {
+            new Thread(() =>  
+            {
+                var processInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = "netsh",
+                    Arguments = "http flush logbuffer"
+                };
+                while(true)
+                {
+                    System.Diagnostics.Process.Start(processInfo);
+                    Thread.Sleep(2000);
+                }
+            }).Start();
         }
 
         private void InitLogFileWatcher(string logsPath)
@@ -80,7 +100,7 @@ namespace WebApiMonitor.Agent
             dbRecord.Fields.Add("time_taken", double.Parse(record.time_taken));
             dbRecord.Tags.Add("cs_uri_stem", record.cs_uri_stem);
             dbRecord.Tags.Add("cs_method", record.cs_method);
-            dbRecord.Timestamp = DateTime.UtcNow;
+            dbRecord.Timestamp = record.dateTime;
             _dbManager.WriteMetrics("page-stat", dbRecord);
         }
 
