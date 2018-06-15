@@ -6,75 +6,7 @@
 
 @section scripts {
     <script src="../../Content/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-        $(function () {
-            function initEditor() {
-                window.editor = ace.edit("editor");
-                editor.session.setMode("ace/mode/json");
-                editor.getSession().setTabSize(2);
-                editor.getSession().setUseWrapMode(true);
-            }
-
-            initEditor();
-
-            $('#stop-agent-btn').click(function () {
-                var agentId = document.getElementById('Id').value;
-                startSpin();
-                $.ajax({
-                    url: "/Agents/Stop/",
-                    data: JSON.stringify({ id: agentId }),
-                    type: 'post',
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (data) {
-                        if (data.msg !== "Готово")
-                            alert(data.msg);
-                        stopSpin();
-                        location.reload();
-                    }
-                });
-            });
-
-            $('#start-agent-btn').click(function () {
-                var agentId = document.getElementById('Id').value;
-                startSpin();
-                $.ajax({
-                    url: "/Agents/Start/",
-                    data: JSON.stringify({ id: agentId }),
-                    type: 'post',
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (data) {
-                        if (data.msg !== "Готово")
-                            alert(data.msg);
-                        stopSpin();
-                        location.reload();
-                    }
-                });
-            });
-
-            $('#sync-btn').click(function () {
-                var agentId = document.getElementById('Id').value;
-                startSpin();
-                $.ajax({
-                    url: "/Agents/Sync/",
-                    data: JSON.stringify({
-                        id: agentId,
-                        jsonConfig: editor.getValue()
-                    }),
-                    type: 'post',
-                    dataType: "json",
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (data) {
-                        if (data.msg !== "Готово")
-                            alert(data.msg);
-                        stopSpin();
-                        location.reload();
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="~/Content/Scripts/Settings.js"></script>
 }
 
 @Html.HiddenFor(model => model.Id)
@@ -86,11 +18,11 @@
 <div class="row">
     <div class="col-xs-12">
         @*<div class="alert alert-info">
-            <strong>Изменения успешно сохранены.</strong>.
-        </div>*@
+                <strong>Изменения успешно сохранены.</strong>.
+            </div>*@
         <div class="job-snippet">
             <div class="job-snippet-code">
-<div id="editor">@Model.JsonConfig</div>
+                <div id="editor">@Model.JsonConfig</div>
             </div>
         </div>
     </div>
@@ -99,20 +31,20 @@
     <div class="col-xs-12 text-right">
         <h3>
             <span class="job-snippet-buttons">
-               @if (Model.Status == AgentStatus.Working)
-               {
+                @if (Model.Status == AgentStatus.Working)
+                {
                     <button class="js-jobs-list-command btn btn-sm btn-default" id="stop-agent-btn">
                         <span class="glyphicon glyphicon-pause"></span>
                         Остановить
                     </button>
-               }
-               else
-               {
-                    <button class="js-jobs-list-command btn btn-sm btn-default"  id="start-agent-btn">
+                }
+                else
+                {
+                    <button class="js-jobs-list-command btn btn-sm btn-default" id="start-agent-btn">
                         <span class="glyphicon glyphicon-play"></span>
                         Запустить
                     </button>
-               }
+                }
             </span>
             <span class="job-snippet-buttons">
                 <button class="btn btn-sm btn-death" id="sync-btn">

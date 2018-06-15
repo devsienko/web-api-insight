@@ -12,13 +12,13 @@
 <h3>@ViewBag.Message</h3>
 <div class="js-jobs-list">
     <div class="btn-toolbar btn-toolbar-top">
-        <a href="/Agents">
+        <a href="~/Agents">
             <button class="js-jobs-list-command btn btn-sm btn-primary">
                 <span class="glyphicon glyphicon-repeat"></span>
                 Обновить
             </button>
         </a>
-        <a href="/Agents/Add">
+        <a href="~/Agents/Add">
             <button class="js-jobs-list-command btn btn-sm btn-default">
                 <span class="glyphicon glyphicon-plus"></span>
                 Добавить
@@ -51,7 +51,7 @@
                             <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@item.Id">
                         </td>
                         <td class="min-width">
-                            <a href="/Agents/Settings/@item.Id">#@item.Id</a>
+                            <a href="~/Agents/Settings/@item.Id">#@item.Id</a>
                         </td>
                         <td class="min-width">
                             <span class="labe label-defult text-uppercase" title="" data-original-title="wtf5757:11352:95d83da8-6735-48e1-8c50-878ba79163a6">
@@ -60,7 +60,7 @@
                         </td>
                         <td class="word-break">
 
-                            <a class="job-method" href="/Agents/Settings/@item.Id">@item.Status</a>
+                            <a class="job-method" href="~/Agents/Settings/@item.Id">@item.Status</a>
                         </td>
                         <td class="align-right" style="text-align: right;">
                             <span data-moment="1527845460" title="Fri, Jun 1, 2018 5:31 AM" data-container="body" data-original-title="Fri, Jun 1, 2018 5:31 AM">

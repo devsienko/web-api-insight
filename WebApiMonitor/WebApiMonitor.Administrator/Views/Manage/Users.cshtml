@@ -14,13 +14,13 @@
 <p class="text-success">@ViewBag.StatusMessage</p>
 
 <div class="btn-toolbar btn-toolbar-top">
-    <a href="/Manage/Users">
+    <a href="~/Manage/Users">
         <button class="js-jobs-list-command btn btn-sm btn-primary">
             <span class="glyphicon glyphicon-repeat"></span>
             Обновить
         </button>
     </a>
-    <a href="/Account/Register">
+    <a href="~/Account/Register">
         <button class="js-jobs-list-command btn btn-sm btn-default">
             <span class="glyphicon glyphicon-plus"></span>
             Добавить
@@ -55,7 +55,7 @@
                                 <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@login.Id">
                             </td>
                             <td class="min-width">
-                                <a href="/Agents/Settings/@login.Id">@login.UserName</a>
+                                <a href="~/Agents/Settings/@login.Id">@login.UserName</a>
                             </td>
                             <td class="align-right" style="text-align: right;">
                                 <span data-moment="1527845460">

@@ -22,17 +22,15 @@ namespace WebApiMonitor.Agent
             var influxDbManager = new InfluxDbManager(_logger);
             var processCollector = new ProcessCollector(_logger, influxDbManager, pauseOrStartEvent);
             var aspNetCollector = new AspNetCollector(_logger, influxDbManager, pauseOrStartEvent);
+            var iisCollector = new IisLogCollector(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
             var collectorThreads = new List<Thread>
             {
                 new Thread(processCollector.Start),
                 new Thread(aspNetCollector.Start),
+                new Thread(iisCollector.Start),
             };
             //new Thread(DoSomething).Start();
-
             collectorThreads.ForEach(t => t.Start());
-
-            var iisReader = new IisLogCollector(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
-            iisReader.Process();
 
             StartRestServer();
         }

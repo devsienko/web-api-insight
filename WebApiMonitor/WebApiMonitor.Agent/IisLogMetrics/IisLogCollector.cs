@@ -43,7 +43,7 @@ namespace WebApiMonitor.Agent
                 };
                 while(true)
                 {
-                    System.Diagnostics.Process.Start(processInfo);
+                    Process.Start(processInfo);
                     Thread.Sleep(2000);
                 }
             }).Start();
@@ -63,7 +63,7 @@ namespace WebApiMonitor.Agent
         /// <summary>
         /// It reads the lastest log file till the end and is triggered again after appearance the new log file.
         /// </summary>
-        public void Process()
+        public void Start()
         {
             _logger.InfoFormat("Started IIS log reading. App name: {0}.", Settings.AppName);
             var currentLogFilePath = _logFilePath; //to ensure the last reading
