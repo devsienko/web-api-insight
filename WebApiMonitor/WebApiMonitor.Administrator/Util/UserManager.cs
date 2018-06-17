@@ -9,8 +9,7 @@ using WebApiMonitor.Administrator.Models;
 
 namespace WebApiMonitor.Administrator
 {
-    public class UserManager : IUserStore<ApplicationUser>, IUserPasswordStore<ApplicationUser, string>, 
-        IUserLockoutStore<ApplicationUser, string>
+    public class UserManager
     {
         private readonly string ConfigPath = Path.Combine(PathHelper.GetAssemblyLocation(), "Conf/users.json");
 
@@ -64,17 +63,17 @@ namespace WebApiMonitor.Administrator
             File.WriteAllText(ConfigPath, json);
         }
 
-        public Task UpdateAsync(ApplicationUser user)
+        public void ResetPasword(string userId, string newPassword)
         {
-            throw new NotImplementedException();
+            var users = GetUsers();
+            var dbUser = users.FirstOrDefault(u => u.Id == userId);
+            var hashedPassword = PasswordHelper.GetHashedPassword(newPassword);
+            dbUser.PasswordHash = hashedPassword.Password;
+            dbUser.PasswordSalt = hashedPassword.PasswordSalt;
+            var json = new JavaScriptSerializer().Serialize(users);
+            File.WriteAllText(ConfigPath, json);
         }
-
-        public Task SetPasswordHashAsync(ApplicationUser user, string passwordHash)
-        {
-            user.PasswordHash = passwordHash;
-            return Task.FromResult(0);
-        }
-
+        
         public Task<string> GetPasswordHashAsync(ApplicationUser user)
         {
             if (user == null)

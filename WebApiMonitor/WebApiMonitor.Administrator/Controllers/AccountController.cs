@@ -57,7 +57,7 @@ namespace WebApiMonitor.Administrator.Controllers
                     return RedirectToAction("Index", "Home");
                 return RedirectToLocal(returnUrl);
             }
-            ModelState.AddModelError("", "Invalid login attempt.");
+            ModelState.AddModelError("", "Логин или пароль введены неверно.");
             return View(model);
             //// This doesn't count login failures towards account lockout
             //// To enable password failures to trigger account lockout, change to shouldLockout: true

@@ -98,12 +98,21 @@ namespace WebApiMonitor.Administrator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            throw new NotImplementedException();
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(model);
-            //}
-            //var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (PasswordHelper.PasswordsEqual(user.PasswordHash, user.PasswordSalt, model.OldPassword))
+            {
+                UserManager.ResetPasword(user.Id, model.NewPassword);
+                return RedirectToAction("Index", "Manage");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Текущий пароль введен неверно.");
+                return View(model);
+            }
             //if (result.Succeeded)
             //{
             //    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
