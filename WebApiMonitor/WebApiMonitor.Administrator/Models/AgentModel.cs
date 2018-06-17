@@ -12,7 +12,8 @@ namespace WebApiMonitor.Administrator.Models
         public string IpAddress { get; set; }
 
         [Required]
-        //[StringLength(4, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 4)]
+        [StringLength(4, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 4)]
+        [RegularExpression(@"\d{4}", ErrorMessage = "Поле Порт имеет неверный формат.")]
         [DataType(DataType.PostalCode)]
         [Display(Name = "Порт")]
         public string Port { get; set; }
