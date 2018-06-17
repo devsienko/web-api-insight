@@ -29,32 +29,14 @@ namespace WebApiMonitor.Agent
                 new Thread(aspNetCollector.Start),
                 new Thread(iisCollector.Start),
             };
-            //new Thread(DoSomething).Start();
             collectorThreads.ForEach(t => t.Start());
-
             StartRestServer();
         }
-
-        //static void DoSomething()
-        //{
-        //    while(true)
-        //    {
-        //        var t = false;
-        //        if (t)
-        //        {
-        //            pauseOrStartEvent.Reset();
-        //            pauseOrStartEvent.Set();
-        //        }
-        //        Thread.Sleep(1000);
-        //    }
-        //}
 
         static void StartRestServer()
         {
             var config = new HttpSelfHostConfiguration("http://localhost:" + Settings.ServerPort);
-
             config.MessageHandlers.Add(new EventsDelegatingHandler(pauseOrStartEvent));
-
             config.Routes.MapHttpRoute(
                 "API Default", "api/{controller}/{action}/{id}",
                 new { id = RouteParameter.Optional });
@@ -80,7 +62,6 @@ namespace WebApiMonitor.Agent
         {
             request.Properties["StartStopEvent"] = _pauseOrStartEvent;
             return base.SendAsync(request, cancellationToken);
-            //throw new NotImplementedException();
         }
     }
 }

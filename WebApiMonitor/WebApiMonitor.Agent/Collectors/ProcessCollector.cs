@@ -46,8 +46,9 @@ namespace WebApiMonitor.Agent
         private void SaveMetrics()
         {
             InstanceName = GetW3pInstanceName();
-            var counters = MetricsConfig
-                .Select(c => new MeasurementData
+            var counters = MetricsConfigManager.ReadMetricsConfig()
+               .ProccessMetricsConfig
+               .Select(c => new MeasurementData
                 {
                     Measurement = c.Measurement,
                     Counter = new PerformanceCounter

@@ -16,8 +16,8 @@ namespace WebApiMonitor.Agent
         protected override void InitMetricRecords()
         {
             MetricsConfig = MetricsConfigManager.ReadMetricsConfig()
-                .AspNetMetricsConfig
-                .ToList();
+               .AspNetMetricsConfig
+               .ToList();
         }
 
         public override void Start()
@@ -45,21 +45,21 @@ namespace WebApiMonitor.Agent
         private void SaveMetrics()
         {
             InstanceName = ProcessHelper.GetInstanseName(Settings.AppName, Settings.PoolName);
-            var counters = MetricsConfig
-                .Select(c => new MeasurementData
-                {
-                    Measurement = c.Measurement,
-                    Counter = new PerformanceCounter
-                    {
-                        CategoryName = c.CategoryName,
-                        CounterName = c.CounterName,
-                        InstanceName = InstanceName
-                    }
-                })
-                .ToList();
+            var counters = MetricsConfigManager.ReadMetricsConfig()
+               .AspNetMetricsConfig
+               .Select(c => new MeasurementData
+               {
+                   Measurement = c.Measurement,
+                   Counter = new PerformanceCounter
+                   {
+                       CategoryName = c.CategoryName,
+                       CounterName = c.CounterName,
+                       InstanceName = InstanceName
+                   }
+               })
+               .ToList();
             try
             {
-
                 while (true)
                 {
                     PauseOrStartEvent.WaitOne();

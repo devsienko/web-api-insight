@@ -240,3 +240,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/WebApiMonitor/WebApiMonitor.Administrator/Conf
+/WebApiMonitor/WebApiMonitor.Administrator/Conf
