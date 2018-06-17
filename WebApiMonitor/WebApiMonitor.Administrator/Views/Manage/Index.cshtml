@@ -1,6 +1,5 @@
-﻿@model WebApiMonitor.Administrator.Models.IndexViewModel
-@{
-    ViewBag.Title = "Управление аккаунтом";
+﻿@{
+    ViewBag.Title = "Управление аккаунтом пользователя " + ViewBag.UserName;
 }
 
 <h2>@ViewBag.Title</h2>
@@ -12,13 +11,13 @@
         <dt>Пароль:</dt>
         <dd>
             [
-            @Html.ActionLink("Изменить пароль", "ChangePassword")
+            @Html.ActionLink("Изменить пароль", "ChangePassword", new { userName = ViewBag.UserName })
             ]
         </dd>
         <dt>Email:</dt>
         <dd>            
             [
-            @Html.ActionLink("Изменить email", "ChangeEmail")
+            @Html.ActionLink("Изменить email", "ChangeEmail", new { userName = ViewBag.UserName })
             ]
         </dd>
         @*

@@ -1,6 +1,6 @@
 ﻿@model WebApiMonitor.Administrator.Models.ChangeEmailViewModel
 @{
-    ViewBag.Title = "Изменение Email";
+    ViewBag.Title = "Изменение Email пользователя " + ViewBag.UserName;
 }
 
 <h2>@ViewBag.Title</h2>
@@ -8,6 +8,7 @@
 @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
+    <input name="UserName" id="UserName" type="hidden" value="@ViewBag.UserName" />
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">

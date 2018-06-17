@@ -28,10 +28,10 @@ namespace WebApiMonitor.Administrator.Controllers
 
         //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index(ManageMessageId? message)
+        public async Task<ActionResult> Index(string userName)
         {
-            var model = new IndexViewModel { };
-            return View(model);
+            ViewBag.UserName = userName;
+            return View();
         }
 
         [HttpPost]
@@ -88,8 +88,11 @@ namespace WebApiMonitor.Administrator.Controllers
         
         //
         // GET: /Manage/ChangePassword
-        public ActionResult ChangePassword()
+        public ActionResult ChangePassword(string userName)
         {
+            ViewBag.UserName = string.IsNullOrEmpty(userName)
+                ? User.Identity.Name
+                : userName;
             return View();
         }
 
@@ -103,11 +106,14 @@ namespace WebApiMonitor.Administrator.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            var userName = !string.IsNullOrEmpty(model.UserName)
+                ? model.UserName
+                : User.Identity.Name;
+            var user = await UserManager.FindByNameAsync(userName);
             if (PasswordHelper.PasswordsEqual(user.PasswordHash, user.PasswordSalt, model.OldPassword))
             {
                 UserManager.ResetPasword(user.Id, model.NewPassword);
-                return RedirectToAction("Index", "Manage");
+                return RedirectToAction("Index", "Manage", new { userName });
             }
             else
             {
@@ -115,17 +121,15 @@ namespace WebApiMonitor.Administrator.Controllers
                 return View(model);
             }
         }
-
-
-        //
-        // GET: /Manage/ChangePassword
-        public ActionResult ChangeEmail()
+        
+        public ActionResult ChangeEmail(string userName)
         {
+            ViewBag.UserName = string.IsNullOrEmpty(userName)
+                ? User.Identity.Name
+                : userName;
             return View();
         }
-
-        //
-        // POST: /Manage/ChangePassword
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangeEmail(ChangeEmailViewModel model)
@@ -134,13 +138,20 @@ namespace WebApiMonitor.Administrator.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            var userName = !string.IsNullOrEmpty(model.UserName)
+                ? model.UserName
+                : User.Identity.Name;
+            var user = await UserManager.FindByNameAsync(userName);
+            var oldName = user.UserName;
             if (user != null)
             {
                 UserManager.UpdateEmail(user.Id, model.NewEmail);
-                FormsAuthentication.SignOut();
-                AuthHelper.SignIn(HttpContext, model.NewEmail, false);
-                return RedirectToAction("Index", "Manage");
+                if (oldName == User.Identity.Name)
+                {
+                    FormsAuthentication.SignOut();
+                    AuthHelper.SignIn(HttpContext, model.NewEmail, false);
+                }
+                return RedirectToAction("Index", "Manage", new { userName = model.NewEmail });
             }
             else
             {
