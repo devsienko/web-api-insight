@@ -28,7 +28,7 @@
         console.log(items);
         startSpin();
         $.ajax({
-            url: "/Manage/Delete",
+            url: "Delete",
             data: JSON.stringify(items),
             type: 'post',
             dataType: "json",
