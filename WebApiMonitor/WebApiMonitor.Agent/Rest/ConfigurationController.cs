@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading;
+using System.Web.Http;
 
 namespace WebApiMonitor.Agent.Rest
 {
@@ -13,14 +14,11 @@ namespace WebApiMonitor.Agent.Rest
         public bool Post(MetricsConfigContainer newConfig)
         {
             MetricsConfigManager.UpdateMetricsConfig(newConfig);
-            //todo: force agent read new metrics
+            var reloadConfigIndicator = Request.Properties["ReloadConfigurationIndicator"] as ReloadConfigurationIndicator;
+            if (reloadConfigIndicator != null)
+                reloadConfigIndicator.SetFlag();
             return true;
         }
-
-        //todo: pause agent
-
-        //todo: resume agent
-
         //todo: use credentials for rest comand executing
     }
 }

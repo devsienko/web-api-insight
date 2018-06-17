@@ -8,6 +8,7 @@ namespace WebApiMonitor.Agent
     public abstract class BaseCollector
     {
         protected ManualResetEvent PauseOrStartEvent;
+        protected ReloadConfigurationIndicator ReloadConfigIndicator;
         protected ILog Logger;
         protected IDbManager DbManager;
         protected string InstanceName; 
@@ -18,11 +19,12 @@ namespace WebApiMonitor.Agent
 
         }
 
-        public BaseCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
+        public BaseCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent, ReloadConfigurationIndicator reloadConfigIndicator)
         {
             Logger = logger;
             DbManager = dbManager;
             PauseOrStartEvent = pauseOrStartEvent;
+            ReloadConfigIndicator = reloadConfigIndicator;
 
             InitMetricRecords();
         }

@@ -87,6 +87,7 @@
     <Compile Include="Rest\Configuration.cs" />
     <Compile Include="Rest\CommandController.cs" />
     <Compile Include="Rest\ConfigurationController.cs" />
+    <Compile Include="Util\ReloadConfigurationIndicator.cs" />
     <Compile Include="Util\LimitFilesNumberAppender.cs" />
     <Compile Include="Util\AppInfo.cs" />
     <Compile Include="Util\LogHelper.cs" />

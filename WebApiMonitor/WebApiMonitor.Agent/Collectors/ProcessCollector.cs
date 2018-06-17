@@ -8,8 +8,8 @@ namespace WebApiMonitor.Agent
 {
     public class ProcessCollector : BaseCollector
     {
-        public ProcessCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
-            : base(logger, dbManager, pauseOrStartEvent)
+        public ProcessCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent, ReloadConfigurationIndicator reloadConfigIndicator)
+            : base(logger, dbManager, pauseOrStartEvent, reloadConfigIndicator)
         {
         }
 
@@ -64,6 +64,8 @@ namespace WebApiMonitor.Agent
                 while (true)
                 {
                     PauseOrStartEvent.WaitOne();
+                    if (ReloadConfigIndicator.GetAndResetProcessCollectorFlag())
+                        throw new Exception("Перезугрузка конфигурации ProcessCOllector'a.");
                     counters.ForEach(WriteRecord);
                     Thread.Sleep(Settings.ReadingInterval);
                 }

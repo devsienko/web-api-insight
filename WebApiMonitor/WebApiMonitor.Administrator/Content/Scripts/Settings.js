@@ -6,13 +6,15 @@
         editor.getSession().setUseWrapMode(true);
     }
 
+    var baseApiUrl = window.location.origin + '/api-monitor';
+
     initEditor();
 
     $('#stop-agent-btn').click(function () {
         var agentId = document.getElementById('Id').value;
         startSpin();
         $.ajax({
-            url: "/Agents/Stop/",
+            url: baseApiUrl + "/Agents/Stop/",
             data: JSON.stringify({ id: agentId }),
             type: 'post',
             dataType: "json",
@@ -30,7 +32,7 @@
         var agentId = document.getElementById('Id').value;
         startSpin();
         $.ajax({
-            url: "/Agents/Start/",
+            url: baseApiUrl + "/Agents/Start/",
             data: JSON.stringify({ id: agentId }),
             type: 'post',
             dataType: "json",
@@ -48,7 +50,7 @@
         var agentId = document.getElementById('Id').value;
         startSpin();
         $.ajax({
-            url: "/Agents/Sync/",
+            url: baseApiUrl + "/Agents/Sync/",
             data: JSON.stringify({
                 id: agentId,
                 jsonConfig: editor.getValue()

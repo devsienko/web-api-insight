@@ -13,6 +13,7 @@ namespace WebApiMonitor.Agent
     class Program
     {
         static ManualResetEvent pauseOrStartEvent = new ManualResetEvent(false);
+        static ReloadConfigurationIndicator reloadConfigIndicator = new ReloadConfigurationIndicator();
         static readonly ILog _logger = LogHelper.GetLogger();
 
         static void Main()
@@ -20,8 +21,8 @@ namespace WebApiMonitor.Agent
             pauseOrStartEvent.Set();
 
             var influxDbManager = new InfluxDbManager(_logger);
-            var processCollector = new ProcessCollector(_logger, influxDbManager, pauseOrStartEvent);
-            var aspNetCollector = new AspNetCollector(_logger, influxDbManager, pauseOrStartEvent);
+            var processCollector = new ProcessCollector(_logger, influxDbManager, pauseOrStartEvent, reloadConfigIndicator);
+            var aspNetCollector = new AspNetCollector(_logger, influxDbManager, pauseOrStartEvent, reloadConfigIndicator);
             var iisCollector = new IisLogCollector(_logger, influxDbManager, ProcessHelper.GetLogsPath(Settings.AppName, Settings.PoolName));
             var collectorThreads = new List<Thread>
             {
@@ -36,7 +37,7 @@ namespace WebApiMonitor.Agent
         static void StartRestServer()
         {
             var config = new HttpSelfHostConfiguration("http://localhost:" + Settings.ServerPort);
-            config.MessageHandlers.Add(new EventsDelegatingHandler(pauseOrStartEvent));
+            config.MessageHandlers.Add(new EventsDelegatingHandler(pauseOrStartEvent, reloadConfigIndicator));
             config.Routes.MapHttpRoute(
                 "API Default", "api/{controller}/{action}/{id}",
                 new { id = RouteParameter.Optional });
@@ -53,14 +54,18 @@ namespace WebApiMonitor.Agent
     class EventsDelegatingHandler : DelegatingHandler
     {
         private ManualResetEvent _pauseOrStartEvent;
-        public EventsDelegatingHandler(ManualResetEvent pauseOrStartEvent)
+        private ReloadConfigurationIndicator _reloadConfigIndicator;
+
+        public EventsDelegatingHandler(ManualResetEvent pauseOrStartEvent, ReloadConfigurationIndicator reloadConfigIndicator)
         {
             _pauseOrStartEvent = pauseOrStartEvent;
+            _reloadConfigIndicator = reloadConfigIndicator;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             request.Properties["StartStopEvent"] = _pauseOrStartEvent;
+            request.Properties["ReloadConfigurationIndicator"] = _reloadConfigIndicator;
             return base.SendAsync(request, cancellationToken);
         }
     }

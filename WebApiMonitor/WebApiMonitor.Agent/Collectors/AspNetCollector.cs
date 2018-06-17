@@ -8,8 +8,8 @@ namespace WebApiMonitor.Agent
 {
     public class AspNetCollector : BaseCollector
     {
-        public AspNetCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent)
-            : base(logger, dbManager, pauseOrStartEvent)
+        public AspNetCollector(ILog logger, IDbManager dbManager, ManualResetEvent pauseOrStartEvent, ReloadConfigurationIndicator reloadConfigIndicator)
+            : base(logger, dbManager, pauseOrStartEvent, reloadConfigIndicator)
         {
         }
         
@@ -63,6 +63,8 @@ namespace WebApiMonitor.Agent
                 while (true)
                 {
                     PauseOrStartEvent.WaitOne();
+                    if (ReloadConfigIndicator.GetAndResetAspCollectorFlag())
+                        throw new Exception("Перезугрузка конфигурации AspNetCollector'a.");
                     counters.ForEach(WriteRecord);
                     Thread.Sleep(Settings.ReadingInterval);
                 }
