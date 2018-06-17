@@ -52,40 +52,13 @@ namespace WebApiMonitor.Administrator.Controllers
             
             if (user != null && PasswordHelper.PasswordsEqual(user.PasswordHash, user.PasswordSalt, model.Password))
             {
-                SignIn(model.Email, model.RememberMe);
+                AuthHelper.SignIn(HttpContext, model.Email, model.RememberMe);
                 if (string.IsNullOrEmpty(returnUrl))
                     return RedirectToAction("Index", "Home");
                 return RedirectToLocal(returnUrl);
             }
             ModelState.AddModelError("", "Логин или пароль введены неверно.");
             return View(model);
-            //// This doesn't count login failures towards account lockout
-            //// To enable password failures to trigger account lockout, change to shouldLockout: true
-            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            //switch (result)
-            //{
-            //    case SignInStatus.Success:
-            //        return RedirectToLocal(returnUrl);
-            //    case SignInStatus.LockedOut:
-            //        return View("Lockout");
-            //    case SignInStatus.Failure:
-            //    default:
-            //        ModelState.AddModelError("", "Invalid login attempt.");
-            //        return View(model);
-            //}
-        }
-
-        private void SignIn(string email, bool remeberMe)
-        {
-            FormsAuthentication.SetAuthCookie(email, false);
-
-            var expDate = remeberMe
-                ? DateTime.Now.AddYears(1)
-                : DateTime.Now.AddMinutes(30);
-            var authTicket = new FormsAuthenticationTicket(1,email, DateTime.Now, DateTime.Now.AddMinutes(20), false, string.Empty);
-            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-            HttpContext.Response.Cookies.Add(authCookie);
         }
         
         //
@@ -117,19 +90,6 @@ namespace WebApiMonitor.Administrator.Controllers
                     PasswordHash = hashedPassword.Password,
                     PasswordSalt = hashedPassword.PasswordSalt,
                 });
-                //if (result.Succeeded)
-                //{
-                //    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-
-                //    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                //    // Send an email with this link
-                //    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                //    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                //    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                //    return RedirectToAction("Index", "Home");
-                //}
-                //AddErrors(result);
                 return RedirectToAction("Users", "Manage");
             }
 

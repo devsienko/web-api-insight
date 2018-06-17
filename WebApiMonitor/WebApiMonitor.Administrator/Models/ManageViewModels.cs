@@ -54,4 +54,12 @@ namespace WebApiMonitor.Administrator.Models
         [Compare("NewPassword", ErrorMessage = "Пароль и его подтверждение не совпадают.")]
         public string ConfirmPassword { get; set; }
     }
+
+    public class ChangeEmailViewModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Новый Email")]
+        public string NewEmail { get; set; }
+    }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using WebApiMonitor.Administrator.Models;
@@ -113,17 +114,39 @@ namespace WebApiMonitor.Administrator.Controllers
                 ModelState.AddModelError("", "Текущий пароль введен неверно.");
                 return View(model);
             }
-            //if (result.Succeeded)
-            //{
-            //    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            //    if (user != null)
-            //    {
-            //        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-            //    }
-            //    return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
-            //}
-            //AddErrors(result);
-            //return View(model);
+        }
+
+
+        //
+        // GET: /Manage/ChangePassword
+        public ActionResult ChangeEmail()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeEmail(ChangeEmailViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (user != null)
+            {
+                UserManager.UpdateEmail(user.Id, model.NewEmail);
+                FormsAuthentication.SignOut();
+                AuthHelper.SignIn(HttpContext, model.NewEmail, false);
+                return RedirectToAction("Index", "Manage");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Пользователь не найден.");
+                return View(model);
+            }
         }
 
         //

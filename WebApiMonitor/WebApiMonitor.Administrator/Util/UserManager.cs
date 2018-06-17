@@ -73,7 +73,17 @@ namespace WebApiMonitor.Administrator
             var json = new JavaScriptSerializer().Serialize(users);
             File.WriteAllText(ConfigPath, json);
         }
-        
+
+        public void UpdateEmail(string userId, string newEmail)
+        {
+            var users = GetUsers();
+            var dbUser = users.FirstOrDefault(u => u.Id == userId);
+            dbUser.Email = newEmail;
+            dbUser.UserName = newEmail;
+            var json = new JavaScriptSerializer().Serialize(users);
+            File.WriteAllText(ConfigPath, json);
+        }
+
         public Task<string> GetPasswordHashAsync(ApplicationUser user)
         {
             if (user == null)
