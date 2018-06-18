@@ -175,6 +175,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Util\DashboardManager.cs" />
     <Compile Include="Util\AgentsManager.cs" />
     <Compile Include="Util\PathHelper.cs" />
     <Compile Include="Util\AuthHelper.cs" />
@@ -214,6 +215,9 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Conf\agents.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Conf\dashboard.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -265,6 +269,7 @@
     <Content Include="Views\Agents\Add.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
     <Content Include="Views\Manage\ChangeEmail.cshtml" />
+    <Content Include="Views\Home\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

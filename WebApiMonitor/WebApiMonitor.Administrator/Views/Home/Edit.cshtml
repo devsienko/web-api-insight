@@ -1,0 +1,86 @@
+﻿@model WebApiMonitor.Administrator.DashboardItem
+
+@{
+    ViewBag.Title = "Редактирование дэшборда";
+}
+
+@section scripts {
+
+    <script>
+        function onDashboardLoaded() {
+            ////$(".dashboard-frame").contents().find(".sidebar").attr("style", "display:none;");
+
+            //var frm = frames[0].document;
+            //var otherhead = frm.getElementsByTagName("head")[0];
+            //var link = frm.createElement("link");
+            //link.setAttribute("rel", "stylesheet");
+            //link.setAttribute("type", "text/css");
+            //link.setAttribute("href", "Content/site.css");
+            //otherhead.appendChild(link);
+            console.log('iframe loaded');
+        }
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
+
+<h2 class="page-header">@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
+@if (ViewBag.Agents.Count != 0)
+{
+<div class="add-agent">
+    <div class="form-horizontal">
+        @foreach (var item in ViewBag.Agents)
+        {
+        <div class="form-group">
+            @using (Html.BeginForm("SaveItem", "Home", FormMethod.Post, new { @class = "col-md-10", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+
+                @Html.LabelFor(m => m.Url, new { @class = "col-md-2 control-label" })
+                <div class="col-md-8">
+                    <input name="Id" value="@item.Id" type="hidden" />
+                    <input name="Url" value="@item.Url" class="form-control" placeholder="Url" />
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Сохранить" class="btn btn-default" />
+                </div>
+            }
+            @using (Html.BeginForm("RemoveItem", "Home", FormMethod.Post, new { @class = "col-md-2", role = "form" }))
+            {
+                <input name="Id" value="@item.Id" type="hidden" />
+                <div class="text-left col-md-2" style="margin-top: 10px; margin-left: -65px;">
+                    <input type="submit" value="Удалить" class="btn btn-default" />
+                </div>
+            }
+        </div>
+        }
+    </div>
+</div>
+}
+else
+{
+    <p>Нет записей.</p>
+}
+<hr />
+<div class="add-agent">
+    <div class="row">
+        @using (Html.BeginForm("AddItem", "Home", FormMethod.Post, new { @class = "form-horizontal col-md-10", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.Url, new { @class = "col-md-2 control-label" })
+                <div class="col-md-8">
+                    @Html.TextBoxFor(m => m.Url, new { @class = "form-control", @placeholder = "Url" })
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Добавить" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        <div class="col-md-2"></div>
+
+    </div>
+</div>

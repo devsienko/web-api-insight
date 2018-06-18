@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<DashboardItem>
+
+@{
     ViewBag.Title = "Дэшборд";
 }
 
@@ -21,9 +23,10 @@
 
 }
 
-<h2 class="page-header">@ViewBag.Title</h2>
+<h2 class="page-header">@ViewBag.Title (<a href="~/Home/Edit">ред</a>/<a re href="@ViewBag.GrafanaUrl" target="_blank">grafana <span class="glyphicon glyphicon-log-out" style="font-size: 18px;"></span></a>)</h2>
 <h3>@ViewBag.Message</h3>
 
-<iframe src="http://localhost:8888/sources/1/dashboards" class="dashboard-frame" onload="onDashboardLoaded(this)" 
-        id="dashboard-frame">
-</iframe>
+@foreach (var item in Model)
+{
+    <iframe src="@item.Url" width="450" height="220" frameborder="0"></iframe>
+}
