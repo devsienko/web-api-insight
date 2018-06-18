@@ -23,10 +23,13 @@
 
 }
 
-<h2 class="page-header">@ViewBag.Title (<a href="~/Home/Edit">ред</a>/<a re href="@ViewBag.GrafanaUrl" target="_blank">grafana <span class="glyphicon glyphicon-log-out" style="font-size: 18px;"></span></a>)</h2>
-<h3>@ViewBag.Message</h3>
+@*<h2 class="page-header">@ViewBag.Title (<a href="~/Home/Edit">ред</a>/<a re href="@ViewBag.GrafanaUrl" target="_blank">grafana <span class="glyphicon glyphicon-log-out" style="font-size: 18px;"></span></a>)</h2>
+    <h3>@ViewBag.Message</h3>
 
-@foreach (var item in Model)
-{
-    <iframe src="@item.Url" width="450" height="220" frameborder="0"></iframe>
-}
+    @foreach (var item in Model)
+    {
+        <iframe src="@item.Url" width="450" height="220" frameborder="0"></iframe>
+    }*@
+
+<iframe src="http://localhost:3001/d/sSsa-FHmz/stranitsy?orgId=1&from=1529306855710&to=1529307155710&theme=light" class="dashboard-frame" onload="onDashboardLoaded(this)"
+        id="dashboard-frame"></iframe>

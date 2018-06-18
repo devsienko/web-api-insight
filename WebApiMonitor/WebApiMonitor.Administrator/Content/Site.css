@@ -1,4 +1,8 @@
-﻿body {
+﻿html {
+    overflow: hidden;
+}
+
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -9,11 +13,24 @@
     padding-right: 15px;
 }
 
+body {
+    background-color: #f7f8fa;
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
 .dl-horizontal dt {
     white-space: normal;
+}
+
+.logo-fix {
+    position: absolute;
+    height: 66px;
+    width: 98px;
+    background: #f7f8fa;
+    top: 52px;
+    left: 120px;
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
@@ -75,9 +92,9 @@ span.metric {
 }
 
 .dashboard-frame {
-    width: calc(100% + 61px);
+    width: calc(100% + 41px);
     height: 700px;
-    margin-left: -61px;
+    margin-left: -23px;
     border:none;
 }
 
