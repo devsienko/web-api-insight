@@ -1,7 +1,7 @@
 ﻿@using WebApiMonitor.Administrator.Models
 @model WebApiMonitor.Administrator.Models.AgentSettings
 @{
-    ViewBag.Title = "Настройки агента #" + @Model.Id;
+    ViewBag.Title = "Agent #" + @Model.Id;
 }
 
 @section scripts {
@@ -35,20 +35,20 @@
                 {
                     <button class="js-jobs-list-command btn btn-sm btn-default" id="stop-agent-btn">
                         <span class="glyphicon glyphicon-pause"></span>
-                        Остановить
+                        Pause
                     </button>
                 }
                 else
                 {
                     <button class="js-jobs-list-command btn btn-sm btn-default" id="start-agent-btn">
                         <span class="glyphicon glyphicon-play"></span>
-                        Запустить
+                        Start
                     </button>
                 }
             </span>
             <span class="job-snippet-buttons">
                 <button class="btn btn-sm btn-death" id="sync-btn">
-                    Сохранить
+                    Sync
                 </button>
             </span>
         </h3>
@@ -59,11 +59,11 @@
     <div class="col-xs-12">
         <div class="job-snippet-properties">
             <dl>
-                <dt>Сервер</dt>
+                <dt>Server</dt>
                 <dd><pre><code>@Model.IpAddress:@Model.Port</code></pre></dd>
-                <dt>Статус</dt>
+                <dt>Status</dt>
                 <dd><pre><code>@Model.Status</code></pre></dd>
-                <dt>Добавлен</dt>
+                <dt>Added</dt>
                 <dd><pre><code>@Model.CreationDate</code></pre></dd>
             </dl>
         </div>

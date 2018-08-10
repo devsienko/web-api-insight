@@ -1,7 +1,7 @@
 ﻿@model WebApiMonitor.Administrator.Models.UsersViewModel
-@using Microsoft.Owin.Security
+
 @{
-    ViewBag.Title = "Управление пользователями";
+    ViewBag.Title = "Users";
 }
 
 @section scripts {
@@ -17,18 +17,18 @@
     <a href="~/Manage/Users">
         <button class="js-jobs-list-command btn btn-sm btn-primary">
             <span class="glyphicon glyphicon-repeat"></span>
-            Обновить
+            Refresh
         </button>
     </a>
     <a href="~/Account/Register">
         <button class="js-jobs-list-command btn btn-sm btn-default">
             <span class="glyphicon glyphicon-plus"></span>
-            Добавить
+            Add
         </button>
     </a>
     <button class="js-jobs-list-command btn btn-sm btn-default" id="delete-user-btn">
         <span class="glyphicon glyphicon-remove"></span>
-        Удалить выбранные
+        Delete selected
     </button>
     <div class="btn-toolbar-spacer pull-right"></div>
 </div>
@@ -69,7 +69,7 @@
         </div>
         <div class="btn-toolbar">
             <div class="btn-toolbar-label">
-                Всего элементов: @Model.Users.Count
+                Total: @Model.Users.Count
             </div>
         </div>
     }

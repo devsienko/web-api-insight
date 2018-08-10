@@ -7,13 +7,12 @@ namespace WebApiMonitor.Administrator.Models
     {
         [Required]
         [DataType(DataType.Text)]
-        //[StringLength(15, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 15)]
         [Display(Name = "IP-адрес")]
         public string IpAddress { get; set; }
 
         [Required]
-        [StringLength(4, ErrorMessage = "Поле {0} должно быть длинной {2} символов.", MinimumLength = 4)]
-        [RegularExpression(@"\d{4}", ErrorMessage = "Поле Порт имеет неверный формат.")]
+        [StringLength(4, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 4)]
+        [RegularExpression(@"\d{4}", ErrorMessage = "The Port field has incorrect format.")]
         [DataType(DataType.PostalCode)]
         [Display(Name = "Порт")]
         public string Port { get; set; }
@@ -31,8 +30,8 @@ namespace WebApiMonitor.Administrator.Models
 
     public static class AgentStatus
     {
-        public const string Working = "Запущен";
-        public const string Stopped = "Остановлен";
-        public const string NotResponding = "Не отвечает";
+        public const string Working = "Working";
+        public const string Stopped = "Stopped";
+        public const string NotResponding = "Not responsable";
     }
 }

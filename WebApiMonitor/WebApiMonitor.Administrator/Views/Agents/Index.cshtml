@@ -1,7 +1,7 @@
 ﻿@model List<WebApiMonitor.Administrator.Models.AgentSettings>
 
 @{
-    ViewBag.Title = "Агенты";
+    ViewBag.Title = "Agents";
 }
 
 @section scripts {
@@ -15,18 +15,18 @@
         <a href="~/Agents">
             <button class="js-jobs-list-command btn btn-sm btn-primary">
                 <span class="glyphicon glyphicon-repeat"></span>
-                Обновить
+                Refresh
             </button>
         </a>
         <a href="~/Agents/Add">
             <button class="js-jobs-list-command btn btn-sm btn-default">
                 <span class="glyphicon glyphicon-plus"></span>
-                Добавить
+                Add
             </button>
         </a>
         <button class="js-jobs-list-command btn btn-sm btn-default" id="delete-agent-btn">
             <span class="glyphicon glyphicon-remove"></span>
-            Удалить выбранные
+            Delete selected
         </button>
         <div class="btn-toolbar-spacer pull-right"></div>
     </div>
@@ -37,10 +37,10 @@
                     <th class="min-width">
                         <input type="checkbox" class="js-jobs-list-select-all" id="check-all-chck">
                     </th>
-                    <th class="min-width">Ид</th>
-                    <th class="min-width">Сервер</th>
-                    <th>Статус</th>
-                    <th class="align-right" style="text-align: right;">Добавлен</th>
+                    <th class="min-width">Id</th>
+                    <th class="min-width">Server</th>
+                    <th>Status</th>
+                    <th class="align-right" style="text-align: right;">Added</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,7 +74,7 @@
     </div>
     <div class="btn-toolbar">
         <div class="btn-toolbar-label">
-            Всего элементов: @Model.Count
+            Total: @Model.Count
         </div>
     </div>
 </div>

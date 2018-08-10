@@ -2,11 +2,11 @@
     $('#delete-user-btn').click(function () {
         var checkedItems = $(".checkbox-col input:checked");
         if (checkedItems.length == 0) {
-            alert('Необходимо выбрать хотя бы 1 элемент.')
+            alert('You need to choose at least one element.');
             return;
         }
         else {
-            var isConfirmed = confirm("Вы действительно хотите удалить выбранные элементы?");
+            var isConfirmed = confirm("Do you want to delete the selected items?");
             if (isConfirmed)
                 deleteItems();
         }

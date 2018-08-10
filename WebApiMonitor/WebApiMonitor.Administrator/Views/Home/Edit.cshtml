@@ -1,7 +1,7 @@
-﻿@model WebApiMonitor.Administrator.DashboardItem
+﻿@model DashboardItem
 
 @{
-    ViewBag.Title = "Редактирование дэшборда";
+    ViewBag.Title = "Edit dashboard";
 }
 
 @section scripts {
@@ -44,7 +44,7 @@
                     <input name="Url" value="@item.Url" class="form-control" placeholder="Url" />
                 </div>
                 <div class="col-md-2">
-                    <input type="submit" value="Сохранить" class="btn btn-default" />
+                    <input type="submit" value="Save" class="btn btn-default" />
                 </div>
             }
             @using (Html.BeginForm("RemoveItem", "Home", FormMethod.Post, new { @class = "col-md-2", role = "form" }))
