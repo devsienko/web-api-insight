@@ -1,5 +1,5 @@
 # web-api-insight
-Performance monitoring for asp.net web api
+Performance monitoring for asp.net web api that is hosted on IIS
 
 To run you need to have installed follow components:
 
