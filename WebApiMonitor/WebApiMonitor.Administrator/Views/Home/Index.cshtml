@@ -1,35 +1,78 @@
-﻿@model List<DashboardItem>
+﻿@model List<WebApiMonitor.Administrator.Models.Application>
 
 @{
-    ViewBag.Title = "Dashboard";
+    ViewBag.Title = "Applications";
 }
 
-@section scripts {
+<h2 class="page-header">@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
 
-    <script>
-        function onDashboardLoaded() {
-            ////$(".dashboard-frame").contents().find(".sidebar").attr("style", "display:none;");
+<p class="text-success">@ViewBag.StatusMessage</p>
 
-            //var frm = frames[0].document;
-            //var otherhead = frm.getElementsByTagName("head")[0];
-            //var link = frm.createElement("link");
-            //link.setAttribute("rel", "stylesheet");
-            //link.setAttribute("type", "text/css");
-            //link.setAttribute("href", "Content/site.css");
-            //otherhead.appendChild(link);
-            console.log('iframe loaded');
-        }
-    </script>
+<div class="btn-toolbar btn-toolbar-top">
+    <a href="~/Applications">
+        <button class="js-jobs-list-command btn btn-sm btn-primary">
+            <span class="glyphicon glyphicon-repeat"></span>
+            Refresh
+        </button>
+    </a>
+    <a href="#">
+        <button class="js-jobs-list-command btn btn-sm btn-default">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add
+        </button>
+    </a>
+    <button class="js-jobs-list-command btn btn-sm btn-default" id="delete-user-btn">
+        <span class="glyphicon glyphicon-remove"></span>
+        Delete selected
+    </button>
+    <div class="btn-toolbar-spacer pull-right"></div>
+</div>
 
-}
-
-@*<h2 class="page-header">@ViewBag.Title (<a href="~/Home/Edit">ред</a>/<a re href="@ViewBag.GrafanaUrl" target="_blank">grafana <span class="glyphicon glyphicon-log-out" style="font-size: 18px;"></span></a>)</h2>
-    <h3>@ViewBag.Message</h3>
-
-    @foreach (var item in Model)
+<div class="js-jobs-list">
+    @if (Model.Count > 0)
     {
-        <iframe src="@item.Url" width="450" height="220" frameborder="0"></iframe>
-    }*@
-
-<iframe src="http://localhost:3001/d/23jK1dNmz/mashina?orgId=1&from=now-5m&to=now&theme=light" class="dashboard-frame" onload="onDashboardLoaded(this)"
-        id="dashboard-frame"></iframe>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="min-width" style="width: 25px">
+                            <input type="checkbox" class="js-jobs-list-select-all" id="check-all-chck">
+                        </th>
+                        <th class="min-width">Name</th>
+                        <th class="align-right" style="text-align: right;">Machines count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var application in Model)
+                    {
+                        <tr class="js-jobs-list-row  hover">
+                            <td class="checkbox-col">
+                                <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@application.Id">
+                            </td>
+                            <td class="min-width">
+                                <a href="~/Dashboard?appId=@application.Id">@application.Id</a>
+                            </td>
+                            <td class="align-right" style="text-align: right;">
+                                <span data-moment="1527845460">
+                                    @application.Machines.Count
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="btn-toolbar">
+            <div class="btn-toolbar-label">
+                Total: @Model.Count
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive" style="padding: 15px 0;">
+            <span>Applications list is empty</span>
+        </div>
+    }
+</div>

@@ -1,14 +1,14 @@
 ﻿@{
-    ViewBag.Title = "Управление аккаунтом пользователя " + ViewBag.UserName;
+    ViewBag.Title = "Manage data of user " + ViewBag.UserName;
 }
 
 <h2>@ViewBag.Title</h2>
 
 <div>
-    <h4>Изменение настроек учетной записи</h4>
+    <h4>Manage user data</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>Пароль:</dt>
+        <dt>Password:</dt>
         <dd>
             [
             @Html.ActionLink("Изменить пароль", "ChangePassword", new { userName = ViewBag.UserName })

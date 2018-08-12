@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Web.Configuration;
+using System.Collections.Generic;
 using System.Web.Mvc;
+using WebApiMonitor.Administrator.Models;
 
 namespace WebApiMonitor.Administrator.Controllers
 {
@@ -9,47 +10,26 @@ namespace WebApiMonitor.Administrator.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.GrafanaUrl = WebConfigurationManager.AppSettings["grafana-url"];
-
-            var dashboardManager = new DashboardManager();
-            var items = dashboardManager.GetItems();
-            return View(items);
-        }
-
-        public ActionResult Edit()
-        {
-            var dashboardItems = new DashboardManager();
-            ViewBag.Agents = dashboardItems.GetItems();
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult AddItem(DashboardItem item)
-        {
-            if (!ModelState.IsValid)
+            var applications = new List<Application>
             {
-                ModelState.AddModelError("", "Неправильные данные формы создания.");
-                return RedirectToAction("Edit");
-            }
-            var dashboardManager = new DashboardManager();
-            dashboardManager.Add(new DashboardItem { Url = item.Url });
-            return RedirectToAction("Edit");
-        }
-
-        [HttpPost]
-        public ActionResult SaveItem(DashboardItem item)
-        {
-            var dashboardManager = new DashboardManager();
-            dashboardManager.UpdateUrl(item.Id, item.Url);
-            return RedirectToAction("Edit");
-        }
-
-        [HttpPost]
-        public ActionResult RemoveItem(DashboardItem item)
-        {
-            var dashboardManager = new DashboardManager();
-            dashboardManager.RemoveByIds(new [] { item.Id });
-            return RedirectToAction("Edit");
+                new Application
+                {
+                    Id = 1,
+                    Name = "Neo Qa",
+                    Machines = new List<string> {"aws"},
+                    DashboardUrl = "http://localhost:3001/d/23jK1dNmz/mashina?orgId=1&from=now-5m&to=now&theme=light",
+                    Added = DateTime.Now
+                },
+                new Application
+                {
+                    Id = 2,
+                    Name = "Bangor Qa",
+                    Machines = new List<string> {"hostway"},
+                    DashboardUrl = "http://localhost:3001/d/23jK1dNmz/mashina?orgId=1&from=now-5m&to=now&theme=light",
+                    Added = DateTime.Now
+                }
+            };
+            return View(applications);
         }
 
         public ActionResult About()

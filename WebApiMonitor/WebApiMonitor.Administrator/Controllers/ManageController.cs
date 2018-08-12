@@ -78,13 +78,6 @@ namespace WebApiMonitor.Administrator.Controllers
             //}
             return RedirectToAction("ManageLogins", new { Message = message });
         }
-
-        //
-        // GET: /Manage/AddPhoneNumber
-        public ActionResult AddPhoneNumber()
-        {
-            return View();
-        }
         
         //
         // GET: /Manage/ChangePassword

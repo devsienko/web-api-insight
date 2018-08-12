@@ -174,8 +174,9 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
-    <Compile Include="Util\DashboardManager.cs" />
+    <Compile Include="Models\Application.cs" />
     <Compile Include="Util\AgentsManager.cs" />
     <Compile Include="Util\PathHelper.cs" />
     <Compile Include="Util\AuthHelper.cs" />
@@ -245,9 +246,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
@@ -269,7 +267,11 @@
     <Content Include="Views\Agents\Add.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
     <Content Include="Views\Manage\ChangeEmail.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Edit.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

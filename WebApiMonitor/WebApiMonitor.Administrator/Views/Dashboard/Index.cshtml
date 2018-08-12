@@ -1,0 +1,17 @@
+﻿@model WebApiMonitor.Administrator.Models.Application
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+
+@section scripts {
+    <script>
+        function onDashboardLoaded() {
+            console.log('iframe loaded');
+        }
+    </script>
+}
+
+<iframe src="@Model.DashboardUrl" class="dashboard-frame" onload="onDashboardLoaded(this)"
+        id="dashboard-frame"></iframe>
