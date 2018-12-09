@@ -21,7 +21,7 @@ namespace WebApiMonitor.Administrator
                 ? DateTime.Now.AddYears(1)
                 : DateTime.Now.AddMinutes(30);
             var authTicket = new FormsAuthenticationTicket(1, email, DateTime.Now, expDate, false, string.Empty);
-            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+            var encryptedTicket = FormsAuthentication.Encrypt(authTicket);
             var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
             context.Response.Cookies.Add(authCookie);
         }

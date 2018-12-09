@@ -1,19 +1,21 @@
-﻿using Microsoft.Web.Administration;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using log4net;
+using Microsoft.Web.Administration;
 
-namespace WebApiMonitor.Agent
+namespace WebApiMonitor.Agent.Util
 {
     public class ProcessHelper
     {
-        const int NOT_RUNNING_PID = -1;
-        readonly static object _syncObject = new object();//todo: refactor, consumer producer template
+        const int NotRunningPid = -1;
+        static readonly object SyncObject = new object();//todo: refactor, consumer producer template
+        private static readonly ILog Logger = LogHelper.GetLogger();
 
-        public static int GetIisProcessID(string appPoolName)
+        public static int GetIisProcessId(string appPoolName)
         {
-            lock (_syncObject)
+            lock (SyncObject)
             {
                 using (var serverManager = ServerManager.OpenRemote("localhost"))
                 {
@@ -24,7 +26,7 @@ namespace WebApiMonitor.Agent
                     }
                 }
             }
-            return NOT_RUNNING_PID;
+            return NotRunningPid;
         }
 
         public static string GetInstanseName(string appName, string poolName)
@@ -37,19 +39,19 @@ namespace WebApiMonitor.Agent
                                 GetAppNameByPath(appInfo.CurrentApp.Path));
                 return result;
             }
-            else if (appInfo.CurrentSite != null)
+            if (appInfo.CurrentSite != null)
             {
                 var result = string.Format("_LM_W3SVC_{0}_ROOT", appInfo.CurrentSite.Id);
                 return result;
             }
-            else
-                throw new InvalidOperationException("Application instance name not found.");
+            throw new InvalidOperationException("Application instance name not found.");
         }
 
         public static string GetLogsPath(string appName, string poolName)
         {
             var appInfo = GetAppInfo(appName, poolName);
             var result = string.Format(@"{0}\W3SVC{1}", appInfo.CurrentSite.LogFile.Directory, appInfo.CurrentSite.Id);
+            Logger.Info(string.Format("iis log path: {0}", result));
             result = Environment.ExpandEnvironmentVariables(result);
             return result;
         }
@@ -115,7 +117,7 @@ namespace WebApiMonitor.Agent
 
         public static bool IsPoolAlive(int pid)
         {
-            var result = pid != NOT_RUNNING_PID;
+            var result = pid != NotRunningPid;
             return result;
         }
     }

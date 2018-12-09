@@ -3,6 +3,7 @@ using log4net;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using WebApiMonitor.Agent.Util;
 
 namespace WebApiMonitor.Agent
 {

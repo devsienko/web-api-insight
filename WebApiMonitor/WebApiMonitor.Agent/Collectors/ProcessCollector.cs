@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using WebApiMonitor.Agent.Util;
 
 namespace WebApiMonitor.Agent
 {
@@ -83,7 +84,7 @@ namespace WebApiMonitor.Agent
         private string GetW3pInstanceName()
         {
             var result = string.Empty;
-            var iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
+            var iisPoolPid = ProcessHelper.GetIisProcessId(Settings.PoolName);
             if (!ProcessHelper.IsPoolAlive(iisPoolPid))
                 Logger.InfoFormat("Waiting of pool activation. Pool name: {0}", Settings.PoolName);
             //it's necessary to write zero value to influx by Metrics.Write
@@ -95,7 +96,7 @@ namespace WebApiMonitor.Agent
                 DbManager.WriteMetricsValue("cpu", zeroUsage);
                 DbManager.WriteMetricsValue("memory_usage", zeroUsage);
                 Thread.Sleep(Settings.ReadingInterval * 2);
-                iisPoolPid = ProcessHelper.GetIisProcessID(Settings.PoolName);
+                iisPoolPid = ProcessHelper.GetIisProcessId(Settings.PoolName);
             }
             result = ProcessHelper.GetInstanceNameForProcessId(iisPoolPid);
             Logger.InfoFormat("Pool'{0}' is active.", Settings.PoolName);
